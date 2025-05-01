@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Member;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -15,9 +16,18 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
+        $member = Member::factory()->create([
+            'rfid' => '0',
+            'first_name' => 'Erwin',
+            'last_name' => 'Capati',
+            'gender' => 'male'
+        ]);
+
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Dev User',
+            'username' => 'devuser',
+            'member_id' => $member->id,
+            'password' => bcrypt(value: '123123123')
         ]);
     }
 }

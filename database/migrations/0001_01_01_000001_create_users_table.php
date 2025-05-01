@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->foreignId('member_id')->constrained();
             $table->string('username')->unique();
             $table->string('password');
-            $table->string('role');
+            $table->string('role')->default('student');
             $table->rememberToken();
             $table->timestamps();
         });
