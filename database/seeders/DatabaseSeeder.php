@@ -2,7 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Faculty;
+use App\Models\Level;
 use App\Models\Member;
+use App\Models\Section;
+use App\Models\Student;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -14,8 +18,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
         $member = Member::factory()->create([
             'rfid' => '0',
             'first_name' => 'Erwin',
@@ -24,10 +26,27 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::factory()->create([
-            'name' => 'Dev User',
-            'username' => 'devuser',
+            'name' => 'Admin User',
+            'username' => 'admin',
             'member_id' => $member->id,
             'password' => bcrypt(value: '123123123')
         ]);
+
+
+        // Member::factory(27)->create();
+
+        Faculty::factory(count: 7)->create();
+
+        User::factory(7)->create([
+            'password' => bcrypt(value: '123123123')
+        ]);
+
+        // Level::factory(count: 8)->create();
+
+        // Section::factory(count: 9)->create();
+
+        Student::factory(count: 20)->create();
+
+
     }
 }

@@ -15,9 +15,9 @@ return new class extends Migration {
             $table->foreignId('member_id')->constrained();
             $table->foreignId('level_id')->constrained();
             $table->foreignId('section_id')->constrained();
-            $table->string('student_no');
-            $table->string('guardian');
-            $table->string('mobile');
+            $table->string('student_no')->nullable();
+            $table->string('guardian')->nullable();
+            $table->string('mobile')->nullable();
             $table->boolean('can_notify')->default(false);
             $table->timestamps();
         });

@@ -17,10 +17,15 @@ class MemberFactory extends Factory
     public function definition(): array
     {
         return [
-            'rfid' => fake()->word(),
+            'rfid' => fake()->creditCardNumber(),
             'first_name' => fake()->firstName(),
+            'middle_name' => fake()->lastName(),
             'last_name' => fake()->lastName(),
             'gender' => $this->faker->randomElement(['male', 'female']),
+            'address' => fake()->address(),
+            'date_of_birth' => fake()->date(),
+            'email' => fake()->email(),
+            'mobile_no' => fake()->phoneNumber(),
         ];
     }
 }

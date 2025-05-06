@@ -15,8 +15,8 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Students',
-        href: '/students',
+        title: 'Students & Faculties',
+        href: '/members',
         icon: UsersRound,
     },
 ];
