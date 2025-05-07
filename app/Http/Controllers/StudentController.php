@@ -13,26 +13,29 @@ use Inertia\Inertia;
 
 class StudentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $students = Student::all();
-        // $students = Student::simplePaginate(5);
 
-        $students->load([
-            'member',
-            'level',
-            'section'
-        ]);
+        $query = Student::with(['member', 'level', 'section']);
+        // ->paginate(10);
 
-        // $students = member::all()
-        //     ->with('member')
-        //     ->with('level')
-        //     ->with('section')
-        //     ->latest()
-        //     ->get();
+
+        if ($search = $request->input('search')) {
+            $query->when($search, function ($query, $search) {
+                $query->whereHas('member', function ($q) use ($search) {
+                    $q->where('first_name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $students = $query->paginate(10)->withQueryString();
 
         return Inertia::render('student/Index', [
-            'students' => $students
+            'students' => $students,
+            'filters' => [
+                'search' => $search
+            ]
         ]);
     }
 
