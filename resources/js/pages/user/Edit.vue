@@ -4,13 +4,14 @@ import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { type BreadcrumbItem } from '@/types';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { capitalize } from 'vue';
+import { capitalize, ref } from 'vue';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import InputError from '@/components/InputError.vue';
 import { toast } from 'vue-sonner';
+import { Separator } from '@/components/ui/separator';
 
 const props = defineProps({
     user: {
@@ -38,9 +39,11 @@ const form = useForm({
     date_of_birth: user.member.date_of_birth,
     email: user.member.email,
     mobile_no: user.member.mobile_no,
-    // level_id: user.level.id,
-    // section_id: user.section.id
+    username: user.username,
+    password: user.password
 })
+
+const showPassword = ref(false)
 
 const handleSubmit = () => {
     form.put(route('users.update', user), {
@@ -142,35 +145,38 @@ const breadcrumbs: BreadcrumbItem[] = [
 
                             </div>
 
+                            <Separator class="my-4" />
+
                             <div class="grid grid-cols-2 gap-6">
 
-                                <!-- <div class="grid w-full gap-2">
-                                    <Label for="level_id">Grade Level</Label>
-                                    <Select id="level_id" v-model="form.level_id">
-                                        <SelectTrigger class="w-full">
-                                            <SelectValue placeholder="Select Grade Level"/>
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem v-for="level in levels" :key="level.id" :value="level.id">
-                                                {{ capitalize(level.name) }}
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <InputError :message="form.errors.level_id" />
+                                <div class="grid w-full gap-2">
+                                    <Label for="username">Username</Label>
+                                    <Input id="username" v-model="form.username" />
+                                    <InputError :message="form.errors.username" />
                                 </div>
 
                                 <div class="grid w-full gap-2">
-                                    <Label for="section_id">Section</Label>
-                                    <Select id="section_id" v-model="form.section_id">
-                                        <SelectTrigger class="w-full">
-                                            <SelectValue placeholder="Select section"/>
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem v-for="section in sections" :key="section.id" :value="section.id">{{ capitalize(section.name) }}</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <InputError :message="form.errors.section_id" />
-                                </div> -->
+                                    <Label for="password">Change Password</Label>
+                                    <div class="relative">
+                                        <input
+                                            :type="showPassword ? 'text' : 'password'"
+                                            v-model="form.password"
+                                            class="border p-2 pr-10 rounded w-full"
+                                        />
+                                        <button
+                                            type="button"
+                                            @click="showPassword = !showPassword"
+                                            class="absolute right-2 top-2 text-sm text-gray-600"
+                                        >
+                                        {{ showPassword ? 'Hide' : 'Show' }}
+                                        </button>
+                                    </div>
+                                    <InputError :message="form.errors.username" />
+
+                                    <!-- <Label for="password">Password</Label>
+                                    <Input id="password" v-model="form.password" />
+                                    <InputError :message="form.errors.password" /> -->
+                                </div>
 
                             </div>
                             <div class="flex justify-between items-center">

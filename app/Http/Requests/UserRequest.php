@@ -41,8 +41,8 @@ class UserRequest extends FormRequest
             'date_of_birth' => ['nullable'],
             'email' => ['nullable'],
             'mobile_no' => ['nullable'],
-            // 'level_id' => ['nullable'],
-            // 'section_id' => ['nullable']
+            'username' => ['nullable'],
+            'password' => ['nullable']
         ];
     }
 }

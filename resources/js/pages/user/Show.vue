@@ -5,6 +5,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { capitalize } from 'vue';
+import { Separator } from '@/components/ui/separator';
 
 const props = defineProps({
     user: {
@@ -35,7 +36,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                     <CardHeader>
                         <CardTitle>User info</CardTitle>
                     </CardHeader>
-                    <CardContent class="space-y-2">
+                    <CardContent class="space-y-3">
                         <div class="flex items-center space-x-4">
                             <div class="w-32 font-semibold">First Name</div>
                             <div>{{ user.member.first_name }}</div>
@@ -68,7 +69,16 @@ const breadcrumbs: BreadcrumbItem[] = [
                             <div class="w-32 font-semibold">Mobile No.</div>
                             <div>{{ user.member.mobile_no }}</div>
                         </div>
+
+                        <Separator class="my-4" />
+
+                        <div class="flex items-center space-x-4">
+                            <div class="w-32 font-semibold">Username</div>
+                            <div>{{ user.username }}</div>
+                        </div>
+
                     </CardContent>
+
                     <CardContent class="space-y-2">
                         <!-- <div class="flex items-center space-x-4">
                             <div class="w-32 font-semibold">Grade Level</div>

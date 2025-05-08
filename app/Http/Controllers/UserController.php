@@ -8,6 +8,7 @@ use App\Models\Level;
 use App\Models\Section;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -84,10 +85,18 @@ class UserController extends Controller
 
         $data = $request->validated();
 
-        // $user->update([
-        //     'section_id' => $data['section_id'],
-        //     'level_id' => $data['level_id']
-        // ]);
+        // dd($request, $data);
+
+        $user->update([
+            'username' => $data['username'],
+            'name' => $data['first_name'] . " " . $data['last_name'],
+        ]);
+
+        if (isset($data['password']) && !empty($data['password'])) {
+            $user->update([
+                'password' => Hash::make($data['password']),
+            ]);
+        }
 
         $user->member()->update([
             'first_name' => $data['first_name'],

@@ -8,6 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search } from 'lucide-vue-next';
 import { computed, reactive, ref, watch } from 'vue';
 import { debounce } from 'lodash';
+import Heading from '@/components/Heading.vue';
 
 const props = defineProps({
     faculties: {
@@ -64,6 +65,7 @@ console.log(props.faculties)
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="m-3">
+            <Heading title="Faculties" description="Manage faculties" />
             <div class="relative w-full max-w-sm items-center">
                 <input v-model="form.search" @input="searchFaculties" id="search" type="text" placeholder="Search faculty" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
                 <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">

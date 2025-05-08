@@ -8,6 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search } from 'lucide-vue-next';
 import { computed, reactive, ref, watch } from 'vue';
 import { debounce } from 'lodash';
+import Heading from '@/components/Heading.vue';
 
 const props = defineProps({
     users: {
@@ -64,6 +65,7 @@ console.log(props.users)
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="m-3">
+            <Heading title="Users" description="Manage users" />
             <div class="relative w-full max-w-sm items-center">
                 <input v-model="form.search" @input="searchUsers" id="search" type="text" placeholder="Search user" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
                 <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
@@ -94,11 +96,13 @@ console.log(props.users)
                     <TableHeader>
                         <TableRow>
                             <TableHead>Name</TableHead>
+                            <TableHead>Role</TableHead>
+                            <TableHead>Username</TableHead>
                             <TableHead>Date of birth</TableHead>
                             <TableHead>Gender</TableHead>
                             <TableHead>Email</TableHead>
                             <TableHead>Mobile No</TableHead>
-                            <TableHead>Address</TableHead>
+                            <!-- <TableHead>Address</TableHead> -->
                             <!-- <TableHead class="w-[120px]">Actions</TableHead> -->
                         </TableRow>
                     </TableHeader>
@@ -109,11 +113,13 @@ console.log(props.users)
                                     {{ user.member.first_name }} {{ user.member.last_name}}
                                 </Link>
                             </TableCell>
+                            <TableCell>{{ user.role}}</TableCell>
+                            <TableCell>{{ user.username}}</TableCell>
                             <TableCell>{{ user.member.date_of_birth}}</TableCell>
                             <TableCell>{{ user.member.gender}}</TableCell>
                             <TableCell>{{ user.member.email}}</TableCell>
                             <TableCell>{{ user.member.mobile_no}}</TableCell>
-                            <TableCell>{{ user.member.address}}</TableCell>
+                            <!-- <TableCell>{{ user.member.address}}</TableCell> -->
                             <!-- <TableCell class="space-x-2"> -->
                                 <!-- <Link :href="route('users.show', user.id)" :class="buttonVariants({variant: 'secondary'})">Show</Link> -->
                                 <!-- <Link :href="route('users.edit', user.id)" :class="buttonVariants({variant: 'default'})">Edit</Link> -->

@@ -8,6 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search } from 'lucide-vue-next';
 import { computed, reactive, ref, watch } from 'vue';
 import { debounce } from 'lodash';
+import Heading from '@/components/Heading.vue';
 
 const props = defineProps({
     students: {
@@ -64,28 +65,29 @@ console.log(props.students)
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="m-3">
-            <div class="relative w-full max-w-sm items-center">
-                <input v-model="form.search" @input="searchStudents" id="search" type="text" placeholder="Search student" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
-                <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
-                <Search class="size-6 text-muted-foreground" />
-                </span>
+            <Heading title="Students" description="Manage students" />
+            <div class="ml-3 mb-3 space-x-3">
+                <div class="relative space-x-3">
+                    <input v-model="form.search" @input="searchStudents" id="search" type="text" placeholder="Search student" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
+                    <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
+                    <Search class="size-6 text-muted-foreground" />
+                    </span>
+
+                    <select v-model="form.grade_level" @change="applyFilters" class="border p-2 rounded">
+                        <option value="">All Grades</option>
+                        <option v-for="grade in gradeLevels" :key="grade.id" :value="grade.id">
+                        {{ grade.name }}
+                        </option>
+                    </select>
+
+                    <select v-model="form.section_id" @change="applyFilters" class="border p-2 rounded">
+                        <option value="">All Sections</option>
+                        <option v-for="section in sections" :key="section.id" :value="section.id">
+                        {{ section.name }}
+                        </option>
+                    </select>
+                </div>
             </div>
-        </div>
-
-        <div class="ml-3 mb-3 space-x-3">
-            <select v-model="form.grade_level" @change="applyFilters" class="border p-2 rounded">
-                <option value="">All Grades</option>
-                <option v-for="grade in gradeLevels" :key="grade.id" :value="grade.id">
-                {{ grade.name }}
-                </option>
-            </select>
-
-            <select v-model="form.section_id" @change="applyFilters" class="border p-2 rounded">
-                <option value="">All Sections</option>
-                <option v-for="section in sections" :key="section.id" :value="section.id">
-                {{ section.name }}
-                </option>
-            </select>
         </div>
 
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
