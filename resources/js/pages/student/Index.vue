@@ -18,10 +18,20 @@ const props = defineProps({
         type: Object,
         required: true
     },
+    gradeLevels:  {
+        type: Array,
+        required: true
+    },
+    sections:  {
+        type: Array,
+        required: true
+    }
 })
 
 const form = reactive({
   search: props.filters.search || '',
+  grade_level: props.filters.grade_level || '',
+  section_id: props.filters.section_id || '',
 })
 
 const searchStudents = debounce(() => {
@@ -30,6 +40,13 @@ const searchStudents = debounce(() => {
     replace: true,
   })
 }, 300)
+
+function applyFilters() {
+  router.get(route('students.index'), { ...form }, {
+    preserveState: true,
+    replace: true,
+  })
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -53,6 +70,22 @@ console.log(props.students)
                 <Search class="size-6 text-muted-foreground" />
                 </span>
             </div>
+        </div>
+
+        <div class="ml-3 mb-3 space-x-3">
+            <select v-model="form.grade_level" @change="applyFilters" class="border p-2 rounded">
+                <option value="">All Grades</option>
+                <option v-for="grade in gradeLevels" :key="grade.id" :value="grade.id">
+                {{ grade.name }}
+                </option>
+            </select>
+
+            <select v-model="form.section_id" @change="applyFilters" class="border p-2 rounded">
+                <option value="">All Sections</option>
+                <option v-for="section in sections" :key="section.id" :value="section.id">
+                {{ section.name }}
+                </option>
+            </select>
         </div>
 
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">

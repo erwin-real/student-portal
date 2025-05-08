@@ -17,8 +17,8 @@ class StudentController extends Controller
     {
 
         $query = Student::with(['member', 'level', 'section']);
-        // ->paginate(10);
-
+        $gradeLevel = $request->string('grade_level');
+        $sectionId = $request->string('section_id');
 
         if ($search = $request->input('search')) {
             $query->when($search, function ($query, $search) {
@@ -29,13 +29,33 @@ class StudentController extends Controller
             });
         }
 
+        if ($gradeLevel = $request->input('grade_level')) {
+            $query->when(
+                $gradeLevel,
+                fn($query) =>
+                $query->where('level_id', $gradeLevel)
+            );
+        }
+
+        if ($sectionId = $request->input('section_id')) {
+            $query->when(
+                $sectionId,
+                fn($query) =>
+                $query->where('section_id', $sectionId)
+            );
+        }
+
         $students = $query->paginate(10)->withQueryString();
 
         return Inertia::render('student/Index', [
             'students' => $students,
             'filters' => [
-                'search' => $search
-            ]
+                'search' => $search,
+                'grade_level_id' => $gradeLevel,
+                'section_id' => $sectionId,
+            ],
+            'gradeLevels' => Level::select('id', 'name')->get(),
+            'sections' => Section::select('id', 'name')->get(),
         ]);
     }
 
