@@ -111,4 +111,10 @@ class UserController extends Controller
 
         return redirect()->route('users.show', $userID);
     }
+
+    public function create()
+    {
+
+        return redirect()->route('users.index');
+    }
 }

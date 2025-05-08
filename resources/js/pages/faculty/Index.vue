@@ -66,11 +66,13 @@ console.log(props.faculties)
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="m-3">
             <Heading title="Faculties" description="Manage faculties" />
-            <div class="relative w-full max-w-sm items-center">
-                <input v-model="form.search" @input="searchFaculties" id="search" type="text" placeholder="Search faculty" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
-                <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
-                <Search class="size-6 text-muted-foreground" />
-                </span>
+            <div class="m-3">
+                <div class="relative w-full max-w-sm items-center">
+                    <input v-model="form.search" @input="searchFaculties" id="search" type="text" placeholder="Search faculty" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
+                    <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
+                        <Search class="size-6 text-muted-foreground" />
+                    </span>
+                </div>
             </div>
         </div>
 

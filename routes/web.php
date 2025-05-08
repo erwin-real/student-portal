@@ -36,6 +36,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::group(['prefix' => 'users'], function () {
         Route::get('/', [UserController::class, 'index'])->name('users.index');
+        Route::get('/create', [UserController::class, 'create'])->name('users.create');
         Route::get('/{id}', [UserController::class, 'show'])->name('users.show');
         Route::get('/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::match(['put', 'patch'], '/{student}', [UserController::class, 'update'])->name('users.update');

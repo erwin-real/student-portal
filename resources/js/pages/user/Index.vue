@@ -5,7 +5,7 @@ import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { buttonVariants } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Search } from 'lucide-vue-next';
+import { Search, Plus } from 'lucide-vue-next';
 import { computed, reactive, ref, watch } from 'vue';
 import { debounce } from 'lodash';
 import Heading from '@/components/Heading.vue';
@@ -66,12 +66,21 @@ console.log(props.users)
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="m-3">
             <Heading title="Users" description="Manage users" />
-            <div class="relative w-full max-w-sm items-center">
-                <input v-model="form.search" @input="searchUsers" id="search" type="text" placeholder="Search user" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
-                <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
-                <Search class="size-6 text-muted-foreground" />
-                </span>
+            <div class="m-3 flex justify-between align-center gap-2">
+                <div class="relative w-full max-w-sm items-center">
+                    <input v-model="form.search" @input="searchUsers" id="search" type="text" placeholder="Search user" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
+                    <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
+                        <Search class="size-6 text-muted-foreground" />
+                    </span>
+                </div>
+
+                <Link :href="route('users.create')" :class="buttonVariants({variant: 'default'})">
+                    <component :is="Plus" />
+                    Create new user
+                </Link>
+
             </div>
+
         </div>
 
         <!-- <div class="ml-3 mb-3 space-x-3">

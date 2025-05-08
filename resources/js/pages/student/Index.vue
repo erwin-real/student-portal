@@ -66,11 +66,11 @@ console.log(props.students)
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="m-3">
             <Heading title="Students" description="Manage students" />
-            <div class="ml-3 mb-3 space-x-3">
+            <div class="m-3 space-x-3">
                 <div class="relative space-x-3">
                     <input v-model="form.search" @input="searchStudents" id="search" type="text" placeholder="Search student" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
                     <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
-                    <Search class="size-6 text-muted-foreground" />
+                        <Search class="size-6 text-muted-foreground" />
                     </span>
 
                     <select v-model="form.grade_level" @change="applyFilters" class="border p-2 rounded">
@@ -123,19 +123,6 @@ console.log(props.students)
                     </TableBody>
                 </Table>
             </ScrollArea>
-
-            <!-- <div class="mt-3 flex-justify-between">
-                <Link :href="students.prev_page_url ?? ''"
-                    :disabled="!students.prev_page_url"
-                    :class="buttonVariants({variant: 'outline'})">
-                    Prev
-                </Link>
-                <Link :href="students.next_page_url ?? ''"
-                    :disabled="!students.next_page_url"
-                    :class="buttonVariants({variant: 'outline'})">
-                    Next
-                </Link>
-            </div> -->
 
             <div class="mt-3 flex justify-between align-center gap-2">
                 <span>Showing <strong>{{ students.from }} - {{ students.to }}</strong> of <strong>{{students.total}}</strong></span>
