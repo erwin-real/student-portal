@@ -10,7 +10,7 @@ import { computed, reactive, ref, watch } from 'vue';
 import { debounce } from 'lodash';
 
 const props = defineProps({
-    students: {
+    faculties: {
         type: Object,
         required: true
     },
@@ -18,61 +18,61 @@ const props = defineProps({
         type: Object,
         required: true
     },
-    gradeLevels:  {
-        type: Array,
-        required: true
-    },
-    sections:  {
-        type: Array,
-        required: true
-    }
+    // gradeLevels:  {
+    //     type: Array,
+    //     required: true
+    // },
+    // sections:  {
+    //     type: Array,
+    //     required: true
+    // }
 })
 
 const form = reactive({
   search: props.filters.search || '',
-  grade_level: props.filters.grade_level || '',
-  section_id: props.filters.section_id || '',
+//   grade_level: props.filters.grade_level || '',
+//   section_id: props.filters.section_id || '',
 })
 
-const searchStudents = debounce(() => {
-  router.get(route('students.index'), { search: form.search }, {
+const searchFaculties = debounce(() => {
+  router.get(route('faculties.index'), { search: form.search }, {
     preserveState: true,
     replace: true,
   })
 }, 300)
 
-function applyFilters() {
-  router.get(route('students.index'), { ...form }, {
-    preserveState: true,
-    replace: true,
-  })
-}
+// function applyFilters() {
+//   router.get(route('faculties.index'), { ...form }, {
+//     preserveState: true,
+//     replace: true,
+//   })
+// }
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Students',
-        href: '/students',
+        title: 'Faculties',
+        href: '/faculties',
     },
 ];
 
-console.log(props.students)
+console.log(props.faculties)
 
 </script>
 
 <template>
-    <Head title="Students" />
+    <Head title="Faculties" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="m-3">
             <div class="relative w-full max-w-sm items-center">
-                <input v-model="form.search" @input="searchStudents" id="search" type="text" placeholder="Search student" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
+                <input v-model="form.search" @input="searchFaculties" id="search" type="text" placeholder="Search faculty" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
                 <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
                 <Search class="size-6 text-muted-foreground" />
                 </span>
             </div>
         </div>
 
-        <div class="ml-3 mb-3 space-x-3">
+        <!-- <div class="ml-3 mb-3 space-x-3">
             <select v-model="form.grade_level" @change="applyFilters" class="border p-2 rounded">
                 <option value="">All Grades</option>
                 <option v-for="grade in gradeLevels" :key="grade.id" :value="grade.id">
@@ -86,7 +86,7 @@ console.log(props.students)
                 {{ section.name }}
                 </option>
             </select>
-        </div>
+        </div> -->
 
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <ScrollArea>
@@ -94,27 +94,27 @@ console.log(props.students)
                     <TableHeader>
                         <TableRow>
                             <TableHead>Name</TableHead>
-                            <TableHead>Grade Level</TableHead>
-                            <TableHead>Section</TableHead>
+                            <!-- <TableHead>Grade Level</TableHead>
+                            <TableHead>Section</TableHead> -->
                             <TableHead>Gender</TableHead>
                             <TableHead>Address</TableHead>
                             <!-- <TableHead class="w-[120px]">Actions</TableHead> -->
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableRow v-for="student in students.data" :key="student.id">
+                        <TableRow v-for="faculty in faculties.data" :key="faculty.id">
                             <TableCell>
-                                <Link :href="route('students.show', student.id)" class="hover:text-blue-900 text-blue-500">
-                                    {{ student.member.first_name }} {{ student.member.last_name}}
+                                <Link :href="route('faculties.show', faculty.id)" class="hover:text-blue-900 text-blue-500">
+                                    {{ faculty.member.first_name }} {{ faculty.member.last_name}}
                                 </Link>
                             </TableCell>
-                            <TableCell>{{ student.level.name}}</TableCell>
-                            <TableCell>{{ student.section.name}}</TableCell>
-                            <TableCell>{{ student.member.gender}}</TableCell>
-                            <TableCell>{{ student.member.address}}</TableCell>
+                            <!-- <TableCell>{{ faculty.level.name}}</TableCell>
+                            <TableCell>{{ faculty.section.name}}</TableCell> -->
+                            <TableCell>{{ faculty.member.gender}}</TableCell>
+                            <TableCell>{{ faculty.member.address}}</TableCell>
                             <!-- <TableCell class="space-x-2"> -->
-                                <!-- <Link :href="route('students.show', student.id)" :class="buttonVariants({variant: 'secondary'})">Show</Link> -->
-                                <!-- <Link :href="route('students.edit', student.id)" :class="buttonVariants({variant: 'default'})">Edit</Link> -->
+                                <!-- <Link :href="route('faculties.show', faculty.id)" :class="buttonVariants({variant: 'secondary'})">Show</Link> -->
+                                <!-- <Link :href="route('faculties.edit', faculty.id)" :class="buttonVariants({variant: 'default'})">Edit</Link> -->
                                 <!-- Show Edit Delete -->
                             <!-- </TableCell> -->
                         </TableRow>
@@ -123,23 +123,23 @@ console.log(props.students)
             </ScrollArea>
 
             <!-- <div class="mt-3 flex-justify-between">
-                <Link :href="students.prev_page_url ?? ''"
-                    :disabled="!students.prev_page_url"
+                <Link :href="faculties.prev_page_url ?? ''"
+                    :disabled="!faculties.prev_page_url"
                     :class="buttonVariants({variant: 'outline'})">
                     Prev
                 </Link>
-                <Link :href="students.next_page_url ?? ''"
-                    :disabled="!students.next_page_url"
+                <Link :href="faculties.next_page_url ?? ''"
+                    :disabled="!faculties.next_page_url"
                     :class="buttonVariants({variant: 'outline'})">
                     Next
                 </Link>
             </div> -->
 
             <div class="mt-3 flex justify-between align-center gap-2">
-                <span>Showing <strong>{{ students.from }} - {{ students.to }}</strong> of <strong>{{students.total}}</strong></span>
+                <span>Showing <strong>{{ faculties.from }} - {{ faculties.to }}</strong> of <strong>{{faculties.total}}</strong></span>
                 <div class="space-x-2">
                     <Link :href="link.url ?? ''"
-                        v-for="(link, index) in students.links"
+                        v-for="(link, index) in faculties.links"
                         :key="index"
                         v-html="link.label"
                         :class="[
