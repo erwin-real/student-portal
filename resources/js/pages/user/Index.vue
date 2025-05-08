@@ -10,7 +10,7 @@ import { computed, reactive, ref, watch } from 'vue';
 import { debounce } from 'lodash';
 
 const props = defineProps({
-    faculties: {
+    users: {
         type: Object,
         required: true
     },
@@ -18,54 +18,54 @@ const props = defineProps({
         type: Object,
         required: true
     },
-    // gradeLevels:  {
-    //     type: Array,
-    //     required: true
-    // },
-    // sections:  {
-    //     type: Array,
-    //     required: true
-    // }
+    gradeLevels:  {
+        type: Array,
+        required: true
+    },
+    sections:  {
+        type: Array,
+        required: true
+    }
 })
 
 const form = reactive({
   search: props.filters.search || '',
-//   grade_level: props.filters.grade_level || '',
-//   section_id: props.filters.section_id || '',
+  grade_level: props.filters.grade_level || '',
+  section_id: props.filters.section_id || '',
 })
 
-const searchFaculties = debounce(() => {
-  router.get(route('faculties.index'), { search: form.search }, {
+const searchUsers = debounce(() => {
+  router.get(route('users.index'), { search: form.search }, {
     preserveState: true,
     replace: true,
   })
 }, 300)
 
-// function applyFilters() {
-//   router.get(route('faculties.index'), { ...form }, {
-//     preserveState: true,
-//     replace: true,
-//   })
-// }
+function applyFilters() {
+  router.get(route('users.index'), { ...form }, {
+    preserveState: true,
+    replace: true,
+  })
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Faculties',
-        href: '/faculties',
+        title: 'Users',
+        href: '/users',
     },
 ];
 
-console.log(props.faculties)
+console.log(props.users)
 
 </script>
 
 <template>
-    <Head title="Faculties" />
+    <Head title="Users" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="m-3">
             <div class="relative w-full max-w-sm items-center">
-                <input v-model="form.search" @input="searchFaculties" id="search" type="text" placeholder="Search faculty" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
+                <input v-model="form.search" @input="searchUsers" id="search" type="text" placeholder="Search user" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
                 <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
                 <Search class="size-6 text-muted-foreground" />
                 </span>
@@ -103,21 +103,20 @@ console.log(props.faculties)
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableRow v-for="faculty in faculties.data" :key="faculty.id">
+                        <TableRow v-for="user in users.data" :key="user.id">
                             <TableCell>
-                                <Link :href="route('faculties.show', faculty.id)" class="hover:text-blue-900 text-blue-500">
-                                    {{ faculty.member.first_name }} {{ faculty.member.last_name}}
+                                <Link :href="route('users.show', user.id)" class="hover:text-blue-900 text-blue-500">
+                                    {{ user.member.first_name }} {{ user.member.last_name}}
                                 </Link>
                             </TableCell>
-                            <TableCell>{{ faculty.member.date_of_birth}}</TableCell>
-                            <TableCell>{{ faculty.member.gender}}</TableCell>
-                            <TableCell>{{ faculty.member.email}}</TableCell>
-                            <TableCell>{{ faculty.member.mobile_no}}</TableCell>
-                            <TableCell>{{ faculty.member.address}}</TableCell>
-
+                            <TableCell>{{ user.member.date_of_birth}}</TableCell>
+                            <TableCell>{{ user.member.gender}}</TableCell>
+                            <TableCell>{{ user.member.email}}</TableCell>
+                            <TableCell>{{ user.member.mobile_no}}</TableCell>
+                            <TableCell>{{ user.member.address}}</TableCell>
                             <!-- <TableCell class="space-x-2"> -->
-                                <!-- <Link :href="route('faculties.show', faculty.id)" :class="buttonVariants({variant: 'secondary'})">Show</Link> -->
-                                <!-- <Link :href="route('faculties.edit', faculty.id)" :class="buttonVariants({variant: 'default'})">Edit</Link> -->
+                                <!-- <Link :href="route('users.show', user.id)" :class="buttonVariants({variant: 'secondary'})">Show</Link> -->
+                                <!-- <Link :href="route('users.edit', user.id)" :class="buttonVariants({variant: 'default'})">Edit</Link> -->
                                 <!-- Show Edit Delete -->
                             <!-- </TableCell> -->
                         </TableRow>
@@ -126,23 +125,23 @@ console.log(props.faculties)
             </ScrollArea>
 
             <!-- <div class="mt-3 flex-justify-between">
-                <Link :href="faculties.prev_page_url ?? ''"
-                    :disabled="!faculties.prev_page_url"
+                <Link :href="users.prev_page_url ?? ''"
+                    :disabled="!users.prev_page_url"
                     :class="buttonVariants({variant: 'outline'})">
                     Prev
                 </Link>
-                <Link :href="faculties.next_page_url ?? ''"
-                    :disabled="!faculties.next_page_url"
+                <Link :href="users.next_page_url ?? ''"
+                    :disabled="!users.next_page_url"
                     :class="buttonVariants({variant: 'outline'})">
                     Next
                 </Link>
             </div> -->
 
             <div class="mt-3 flex justify-between align-center gap-2">
-                <span>Showing <strong>{{ faculties.from }} - {{ faculties.to }}</strong> of <strong>{{faculties.total}}</strong></span>
+                <span>Showing <strong>{{ users.from }} - {{ users.to }}</strong> of <strong>{{users.total}}</strong></span>
                 <div class="space-x-2">
                     <Link :href="link.url ?? ''"
-                        v-for="(link, index) in faculties.links"
+                        v-for="(link, index) in users.links"
                         :key="index"
                         v-html="link.label"
                         :class="[
