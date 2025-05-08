@@ -76,7 +76,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                         </div>
                         <div class="flex items-center space-x-4">
                             <div class="w-32 font-semibold">Section</div>
-                            <div>{{ capitalize(student.section.name) }}</div>
+                            <div>{{ student.section ? capitalize(student.section?.name) : '' }}</div>
                         </div>
                         <div class="flex justify-between items-center space-x-4 mt-6">
                             <Link :href="route('students.index')" :class="buttonVariants({variant: 'outline'})">Back</Link>

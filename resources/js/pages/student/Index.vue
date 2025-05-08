@@ -111,7 +111,7 @@ console.log(props.students)
                                 </Link>
                             </TableCell>
                             <TableCell>{{ student.level.name}}</TableCell>
-                            <TableCell>{{ student.section.name}}</TableCell>
+                            <TableCell>{{ student?.section?.name}}</TableCell>
                             <TableCell>{{ student.member.gender}}</TableCell>
                             <TableCell>{{ student.member.address}}</TableCell>
                             <!-- <TableCell class="space-x-2"> -->

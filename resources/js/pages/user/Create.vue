@@ -4,17 +4,18 @@ import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { type BreadcrumbItem } from '@/types';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { capitalize } from 'vue';
+import { capitalize, ref } from 'vue';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import InputError from '@/components/InputError.vue';
 import { toast } from 'vue-sonner';
+import { Separator } from '@/components/ui/separator';
 
 const props = defineProps({
-    student: {
-        type: Object,
+    members: {
+        type: Array,
         required: true
     },
     levels: {
@@ -27,53 +28,46 @@ const props = defineProps({
     }
 })
 
-const student = props.student;
+const members = props.members;
 
 const form = useForm({
-    first_name: student.member.first_name,
-    middle_name: student.member.middle_name,
-    last_name: student.member.last_name,
-    gender: student.member.gender,
-    address: student.member.address,
-    date_of_birth: student.member.date_of_birth,
-    email: student.member.email,
-    mobile_no: student.member.mobile_no,
-    level_id: student.level.id,
-    section_id: student?.section?.id
+    member_id: '',
+    name: '',
+    role: '',
+    username: '',
+    password: '',
 })
 
-const handleSubmit = () => {
-    form.put(route('students.update', student), {
-        preserveScroll: true,
-        onSuccess: () => toast.success('Student Updated Successfully!')
-    })
-}
+const showPassword = ref(false)
+
+// const handleSubmit = () => {
+//     form.put(route('users.update', user), {
+//         preserveScroll: true,
+//         onSuccess: () => toast.success('User Updated Successfully!')
+//     })
+// }
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Students',
-        href: '/students',
+        title: 'Users',
+        href: '/users',
     },
     {
-        title: `${props.student.member.first_name} ${props.student.member.last_name}`,
-        href: `/students/${props.student.id}`,
-    },
-    {
-        title: 'Edit',
-        href: '/students',
+        title: 'Create',
+        href: '/users/create',
     },
 ];
 </script>
 
 <template>
-    <Head title="Edit Student Info" />
+    <Head title="Create new User" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 items-center">
             <div class="flex w-full max-w-2xl flex-col">
                 <Card class="mt-3">
                     <CardHeader>
-                        <CardTitle>Edit Student info</CardTitle>
+                        <CardTitle>Create User info</CardTitle>
                     </CardHeader>
                     <CardContent class="space-y-2">
                         <form @submit.prevent="handleSubmit" class="space-y-6">
@@ -142,40 +136,43 @@ const breadcrumbs: BreadcrumbItem[] = [
 
                             </div>
 
+                            <Separator class="my-4" />
+
                             <div class="grid grid-cols-2 gap-6">
 
                                 <div class="grid w-full gap-2">
-                                    <Label for="level_id">Grade Level</Label>
-                                    <Select id="level_id" v-model="form.level_id">
-                                        <SelectTrigger class="w-full">
-                                            <SelectValue placeholder="Select Grade Level"/>
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem v-for="level in levels" :key="level.id" :value="level.id">
-                                                {{ capitalize(level.name) }}
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <InputError :message="form.errors.level_id" />
+                                    <Label for="username">Username</Label>
+                                    <Input id="username" v-model="form.username" />
+                                    <InputError :message="form.errors.username" />
                                 </div>
 
                                 <div class="grid w-full gap-2">
-                                    <Label for="section_id">Section</Label>
-                                    <Select id="section_id" v-model="form.section_id">
-                                        <SelectTrigger class="w-full">
-                                            <SelectValue placeholder="Select section"/>
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem v-for="section in sections" :key="section.id" :value="section.id">{{ capitalize(section.name) }}</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <InputError :message="form.errors.section_id" />
+                                    <Label for="password">Change Password</Label>
+                                    <div class="relative">
+                                        <input
+                                            :type="showPassword ? 'text' : 'password'"
+                                            v-model="form.password"
+                                            class="border p-2 pr-10 rounded w-full"
+                                        />
+                                        <button
+                                            type="button"
+                                            @click="showPassword = !showPassword"
+                                            class="absolute right-2 top-2 text-sm text-gray-600"
+                                        >
+                                        {{ showPassword ? 'Hide' : 'Show' }}
+                                        </button>
+                                    </div>
+                                    <InputError :message="form.errors.username" />
+
+                                    <!-- <Label for="password">Password</Label>
+                                    <Input id="password" v-model="form.password" />
+                                    <InputError :message="form.errors.password" /> -->
                                 </div>
 
                             </div>
                             <div class="flex justify-between items-center">
-                                <Button type="submit" variant="default" :disabled="form.processing">Save student info</Button>
-                                <Link :class="buttonVariants({variant: 'ghost'})" :href="route('students.show', student.id)">Cancel</Link>
+                                <Button type="submit" variant="default" :disabled="form.processing">Save user info</Button>
+                                <Link :class="buttonVariants({variant: 'ghost'})" :href="route('users.index')">Cancel</Link>
                             </div>
                         </form>
                     </CardContent>

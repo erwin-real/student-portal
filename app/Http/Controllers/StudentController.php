@@ -98,9 +98,12 @@ class StudentController extends Controller
         $data = $request->validated();
 
         $student->update([
-            'section_id' => $data['section_id'],
             'level_id' => $data['level_id']
         ]);
+
+        if (isset($data['section_id']) && !empty($data['section_id'])) {
+            $student->update(['section_id' => $data['section_id']]);
+        }
 
         $student->member()->update([
             'first_name' => $data['first_name'],

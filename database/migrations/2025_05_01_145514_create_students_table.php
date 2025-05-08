@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('member_id')->constrained();
             $table->foreignId('level_id')->constrained();
-            $table->foreignId('section_id')->constrained();
+            $table->foreignId('section_id')->nullable();
             $table->string('student_no')->nullable();
             $table->string('guardian')->nullable();
             $table->string('mobile')->nullable();

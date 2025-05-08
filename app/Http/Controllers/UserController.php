@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
 use App\Models\Level;
+use App\Models\Member;
 use App\Models\Section;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -114,7 +115,10 @@ class UserController extends Controller
 
     public function create()
     {
-
-        return redirect()->route('users.index');
+        return Inertia::render('user/Create', [
+            'members' => Member::orderBy('first_name')->get(),
+            'levels' => Level::orderBy('name')->get(),
+            'sections' => Section::orderBy('name')->get()
+        ]);
     }
 }

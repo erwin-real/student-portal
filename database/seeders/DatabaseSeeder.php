@@ -35,17 +35,17 @@ class DatabaseSeeder extends Seeder
 
         // Member::factory(27)->create();
 
-        Faculty::factory(count: 7)->create();
+        // Faculty::factory(count: 7)->create();
 
-        User::factory(7)->create([
-            'password' => bcrypt(value: '123123123')
-        ]);
+        // User::factory(7)->create([
+        //     'password' => bcrypt(value: '123123123')
+        // ]);
 
         // Level::factory(count: 8)->create();
 
         // Section::factory(count: 9)->create();
 
-        Student::factory(count: 20)->create();
+        // Student::factory(count: 20)->create();
 
 
     }
