@@ -80,11 +80,11 @@ class UserController extends Controller
         ]);
     }
 
-    public function update(UserRequest $request, string $userID)
+    public function update(UserRequest $userRequest, string $userID)
     {
         $user = User::find($userID);
 
-        $data = $request->validated();
+        $data = $userRequest->validated();
 
         // dd($request, $data);
 
@@ -120,5 +120,20 @@ class UserController extends Controller
             'levels' => Level::orderBy('name')->get(),
             'sections' => Section::orderBy('name')->get()
         ]);
+    }
+
+    public function store(UserRequest $userRequest)
+    {
+        $data = $userRequest->validated();
+
+        // Product::create($request->validated() + ['user_id' => $request->user()->id]); // 1st way
+        $user = User::create([
+            'member_id' => $data['id'],
+            'name' => $data['first_name'] . " " . $data['last_name'],
+            'username' => $data['username'],
+            'password' => Hash::make($data['password']),
+        ]); // 2nd way
+
+        return redirect()->route('users.show', $user->id);
     }
 }

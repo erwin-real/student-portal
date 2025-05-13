@@ -180,8 +180,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 
                             </div>
                             <div class="flex justify-between items-center">
-                                <Button type="submit" variant="default" :disabled="form.processing">Save user info</Button>
                                 <Link :class="buttonVariants({variant: 'ghost'})" :href="route('users.show', user.id)">Cancel</Link>
+                                <Button
+                                    type="submit"
+                                    variant="default"
+                                    :disabled="form.processing">
+                                    {{ form.processing ? 'Saving...' : 'Save user info' }}
+                                </Button>
                             </div>
                         </form>
                     </CardContent>

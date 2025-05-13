@@ -12,11 +12,12 @@ return new class extends Migration {
     {
         Schema::create('members', function (Blueprint $table) {
             $table->id();
+            $table->bigin('linked_member_id')->default(0);
             $table->string('rfid')->nullable();
             $table->string('first_name');
             $table->string('middle_name')->nullable();
             $table->string('last_name');
-            $table->enum('gender', ['male', 'female']);
+            $table->enum('gender', ['male', 'female'])->nullable();
             $table->string('address')->nullable();
             $table->date('date_of_birth')->nullable();
             $table->string('email')->nullable();

@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\SectionRequest;
+use App\Models\Level;
+use App\Models\Section;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+
+class LevelController extends Controller
+{
+    public function index(Request $request)
+    {
+
+        $query = Level::with(['sections']);
+
+        if ($search = $request->input('search')) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $levels = $query->paginate(10)->withQueryString();
+
+        return Inertia::render('level/Index', [
+            'levels' => $levels,
+            'filters' => [
+                'search' => $search
+            ]
+        ]);
+    }
+
+    public function create()
+    {
+        return Inertia::render('level/Create', [
+            'gradeLevels' => Level::orderBy('id')->get()
+        ]);
+    }
+
+    public function store(SectionRequest $sectionRequest)
+    {
+        // Product::create($request->validated() + ['user_id' => $request->user()->id]); // 1st way
+        Section::create($sectionRequest->validated()); // 2nd way
+
+        return redirect()->route('levels.index');
+    }
+}

@@ -142,7 +142,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 
                             <div class="flex justify-between items-center">
                                 <Link :class="buttonVariants({variant: 'ghost'})" :href="route('faculties.show', faculty.id)">Cancel</Link>
-                                <Button type="submit" variant="default" :disabled="form.processing">Save faculty info</Button>
+                                <Button
+                                    type="submit"
+                                    variant="default"
+                                    :disabled="form.processing">
+                                    {{ form.processing ? 'Saving...' : 'Save faculty info' }}
+                                </Button>
                             </div>
                         </form>
                     </CardContent>

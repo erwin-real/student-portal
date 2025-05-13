@@ -33,6 +33,7 @@ class UserRequest extends FormRequest
             // 'level' => ['nullable', 'string'],
             // 'section' => ['nullable', 'string']
 
+            'id' => ['nullable'],
             'first_name' => ['nullable'],
             'middle_name' => ['nullable'],
             'last_name' => ['nullable'],

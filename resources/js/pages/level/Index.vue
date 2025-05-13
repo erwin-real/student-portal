@@ -5,14 +5,13 @@ import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { buttonVariants } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Search } from 'lucide-vue-next';
+import { Plus, Search } from 'lucide-vue-next';
 import { computed, reactive, ref, watch } from 'vue';
 import { debounce } from 'lodash';
 import Heading from '@/components/Heading.vue';
-import { capitalize } from 'vue';
 
 const props = defineProps({
-    faculties: {
+    levels: {
         type: Object,
         required: true
     },
@@ -36,15 +35,15 @@ const form = reactive({
 //   section_id: props.filters.section_id || '',
 })
 
-const searchFaculties = debounce(() => {
-  router.get(route('faculties.index'), { search: form.search }, {
+const searchLevels = debounce(() => {
+  router.get(route('levels.index'), { search: form.search }, {
     preserveState: true,
     replace: true,
   })
 }, 300)
 
 // function applyFilters() {
-//   router.get(route('faculties.index'), { ...form }, {
+//   router.get(route('levels.index'), { ...form }, {
 //     preserveState: true,
 //     replace: true,
 //   })
@@ -52,28 +51,35 @@ const searchFaculties = debounce(() => {
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Faculties',
-        href: '/faculties',
+        title: 'Sections',
+        href: '/levels',
     },
 ];
 
-console.log(props.faculties)
+console.log(props.levels)
 
 </script>
 
 <template>
-    <Head title="Faculties" />
+    <Head title="Levels" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="m-3">
-            <Heading title="Faculties" description="Manage faculties" />
-            <div class="m-3">
+            <Heading title="Sections" description="Manage sections" />
+            <div class="m-3 flex justify-between align-center gap-2">
+
                 <div class="relative w-full max-w-sm items-center">
-                    <input v-model="form.search" @input="searchFaculties" id="search" type="text" placeholder="Search faculty" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
+                    <input v-model="form.search" @input="searchLevels" id="search" type="text" placeholder="Search level" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
                     <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
                         <Search class="size-6 text-muted-foreground" />
                     </span>
                 </div>
+
+                <Link :href="route('levels.create')" :class="buttonVariants({variant: 'default'})">
+                    <component :is="Plus" />
+                    Create new section
+                </Link>
+
             </div>
         </div>
 
@@ -98,56 +104,36 @@ console.log(props.faculties)
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Date of birth</TableHead>
-                            <TableHead>Gender</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead>Mobile No</TableHead>
-                            <TableHead>Address</TableHead>
-                            <!-- <TableHead class="w-[120px]">Actions</TableHead> -->
+                            <TableHead>Grade Levels</TableHead>
+                            <TableHead>Sections</TableHead>
+                            <!-- <TableHead>Code</TableHead> -->
+                            <TableHead>Description</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <TableRow v-for="faculty in faculties.data" :key="faculty.id">
-                            <TableCell>
-                                <Link :href="route('faculties.show', faculty.id)" class="hover:text-blue-900 text-blue-500">
-                                    {{ faculty.member.first_name }} {{ faculty.member.last_name}}
-                                </Link>
-                            </TableCell>
-                            <TableCell>{{ faculty.member.date_of_birth}}</TableCell>
-                            <TableCell>{{ capitalize(faculty.member.gender) }}</TableCell>
-                            <TableCell>{{ faculty.member.email}}</TableCell>
-                            <TableCell>{{ faculty.member.mobile_no}}</TableCell>
-                            <TableCell>{{ faculty.member.address}}</TableCell>
-
-                            <!-- <TableCell class="space-x-2"> -->
-                                <!-- <Link :href="route('faculties.show', faculty.id)" :class="buttonVariants({variant: 'secondary'})">Show</Link> -->
-                                <!-- <Link :href="route('faculties.edit', faculty.id)" :class="buttonVariants({variant: 'default'})">Edit</Link> -->
-                                <!-- Show Edit Delete -->
-                            <!-- </TableCell> -->
-                        </TableRow>
+                        <template v-for="level in levels.data" :key="level.id">
+                            <TableRow v-if="level.sections.length > 0" v-for="section in level.sections" :key="section.id">
+                                <TableCell>{{ level.name }}</TableCell>
+                                <TableCell>{{ section.name }}</TableCell>
+                                <!-- <TableCell>{{ section.code }}</TableCell> -->
+                                <TableCell>{{ section.description }}</TableCell>
+                            </TableRow>
+                            <TableRow v-else>
+                                <TableCell>{{ level.name}}</TableCell>
+                                <TableCell class="border px-4 py-2 text-gray-400 italic">—</TableCell>
+                                <TableCell class="border px-4 py-2 text-gray-400 italic">—</TableCell>
+                                <!-- <TableCell class="border px-4 py-2 text-gray-400 italic">—</TableCell> -->
+                            </TableRow>
+                        </template>
                     </TableBody>
                 </Table>
             </ScrollArea>
 
-            <!-- <div class="mt-3 flex-justify-between">
-                <Link :href="faculties.prev_page_url ?? ''"
-                    :disabled="!faculties.prev_page_url"
-                    :class="buttonVariants({variant: 'outline'})">
-                    Prev
-                </Link>
-                <Link :href="faculties.next_page_url ?? ''"
-                    :disabled="!faculties.next_page_url"
-                    :class="buttonVariants({variant: 'outline'})">
-                    Next
-                </Link>
-            </div> -->
-
             <div class="mt-3 flex justify-between align-center gap-2">
-                <span>Showing <strong>{{ faculties.from }} - {{ faculties.to }}</strong> of <strong>{{faculties.total}}</strong></span>
+                <span>Showing <strong>{{ levels.from }} - {{ levels.to }}</strong> of <strong>{{levels.total}}</strong></span>
                 <div class="space-x-2">
                     <Link :href="link.url ?? ''"
-                        v-for="(link, index) in faculties.links"
+                        v-for="(link, index) in levels.links"
                         :key="index"
                         v-html="link.label"
                         :class="[

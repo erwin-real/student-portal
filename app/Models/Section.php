@@ -9,4 +9,8 @@ class Section extends Model
 {
     use HasFactory;
 
+    public function level()
+    {
+        return $this->belongsTo(Level::class);
+    }
 }

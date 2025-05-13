@@ -22,9 +22,9 @@ class Member extends Model
         'photo'
     ];
 
-    public function faculties()
+    public function faculty()
     {
-        return $this->hasMany(Faculty::class);
+        return $this->hasOne(Faculty::class);
     }
 
     public function student()
@@ -32,8 +32,8 @@ class Member extends Model
         return $this->hasOne(Student::class);
     }
 
-    public function users()
+    public function user()
     {
-        return $this->hasMany(User::class);
+        return $this->hasOne(User::class);
     }
 }

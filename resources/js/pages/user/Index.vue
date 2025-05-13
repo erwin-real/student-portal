@@ -6,7 +6,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@
 import { buttonVariants } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search, Plus } from 'lucide-vue-next';
-import { computed, reactive, ref, watch } from 'vue';
+import { capitalize, computed, reactive, ref, watch } from 'vue';
 import { debounce } from 'lodash';
 import Heading from '@/components/Heading.vue';
 
@@ -67,6 +67,7 @@ console.log(props.users)
         <div class="m-3">
             <Heading title="Users" description="Manage users" />
             <div class="m-3 flex justify-between align-center gap-2">
+
                 <div class="relative w-full max-w-sm items-center">
                     <input v-model="form.search" @input="searchUsers" id="search" type="text" placeholder="Search user" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
                     <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
@@ -125,7 +126,7 @@ console.log(props.users)
                             <TableCell>{{ user.role}}</TableCell>
                             <TableCell>{{ user.username}}</TableCell>
                             <TableCell>{{ user.member.date_of_birth}}</TableCell>
-                            <TableCell>{{ user.member.gender}}</TableCell>
+                            <TableCell>{{ capitalize(user.member.gender) }}</TableCell>
                             <TableCell>{{ user.member.email}}</TableCell>
                             <TableCell>{{ user.member.mobile_no}}</TableCell>
                             <!-- <TableCell>{{ user.member.address}}</TableCell> -->

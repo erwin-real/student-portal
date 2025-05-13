@@ -6,7 +6,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@
 import { buttonVariants } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search } from 'lucide-vue-next';
-import { computed, reactive, ref, watch } from 'vue';
+import { capitalize, computed, reactive, ref, watch } from 'vue';
 import { debounce } from 'lodash';
 import Heading from '@/components/Heading.vue';
 
@@ -112,7 +112,7 @@ console.log(props.students)
                             </TableCell>
                             <TableCell>{{ student.level.name}}</TableCell>
                             <TableCell>{{ student?.section?.name}}</TableCell>
-                            <TableCell>{{ student.member.gender}}</TableCell>
+                            <TableCell>{{ capitalize(student.member.gender) }}</TableCell>
                             <TableCell>{{ student.member.address}}</TableCell>
                             <!-- <TableCell class="space-x-2"> -->
                                 <!-- <Link :href="route('students.show', student.id)" :class="buttonVariants({variant: 'secondary'})">Show</Link> -->

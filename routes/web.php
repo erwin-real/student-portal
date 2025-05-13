@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FacultyController;
+use App\Http\Controllers\LevelController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,16 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/{id}', [UserController::class, 'show'])->name('users.show');
         Route::get('/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::match(['put', 'patch'], '/{student}', [UserController::class, 'update'])->name('users.update');
+        Route::post('/', [UserController::class, 'store'])->name('users.store');
+    });
+
+    Route::group(['prefix' => 'levels'], function () {
+        Route::get('/', [LevelController::class, 'index'])->name('levels.index');
+        Route::get('/create', [LevelController::class, 'create'])->name(name: 'levels.create');
+        Route::post('/', [LevelController::class, 'store'])->name('levels.store');
+        // Route::get('/{id}', [LevelController::class, 'show'])->name('levels.show');
+        // Route::get('/{id}/edit', [LevelController::class, 'edit'])->name('levels.edit');
+        // Route::match(['put', 'patch'], '/{student}', [LevelController::class, 'update'])->name('levels.update');
     });
 
 });
