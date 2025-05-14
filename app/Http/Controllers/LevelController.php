@@ -37,10 +37,23 @@ class LevelController extends Controller
         ]);
     }
 
-    public function store(SectionRequest $sectionRequest)
+    // public function store(SectionRequest $sectionRequest)
+    // {
+    //     dd($sectionRequest);
+    //     // Product::create($request->validated() + ['user_id' => $request->user()->id]); // 1st way
+    //     Section::create($sectionRequest->validated()); // 2nd way
+
+    //     return redirect()->route('levels.index');
+    // }
+
+    public function store(Request $request)
     {
-        // Product::create($request->validated() + ['user_id' => $request->user()->id]); // 1st way
-        Section::create($sectionRequest->validated()); // 2nd way
+        // // Product::create($request->validated() + ['user_id' => $request->user()->id]); // 1st way
+        Section::create([
+            'level_id' => $request->level_id,
+            'name' => $request->section_name,
+            'description' => $request->section_description
+        ]); // 2nd way
 
         return redirect()->route('levels.index');
     }

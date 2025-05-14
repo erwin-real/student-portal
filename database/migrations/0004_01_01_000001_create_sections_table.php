@@ -13,8 +13,8 @@ return new class extends Migration {
         Schema::create('sections', function (Blueprint $table) {
             $table->id();
             $table->foreignId('level_id')->constrained();
-            $table->string('code');
             $table->string('name');
+            $table->string('code')->nullable();
             $table->string('description')->nullable();
             $table->timestamps();
         });

@@ -58,8 +58,8 @@ const breadcrumbs: BreadcrumbItem[] = [
                         <form @submit.prevent="handleSubmit" class="space-y-6">
 
                             <div class="grid gap-2">
-                                <Label for="level_id">Grade Level</Label>
-                                <Select id="level_id" v-model="form.level_id">
+                                <Label for="level_id">Grade Level<span class="text-red-600">*</span></Label>
+                                <Select id="level_id" v-model="form.level_id" required>
                                     <SelectTrigger class="w-full">
                                         <SelectValue placeholder="Select Grade Level"/>
                                     </SelectTrigger>
@@ -73,8 +73,8 @@ const breadcrumbs: BreadcrumbItem[] = [
                             </div>
 
                             <div class="grid w-full gap-2">
-                                <Label for="section_name">Section Name</Label>
-                                <Input id="section_name" v-model="form.section_name" />
+                                <Label for="section_name">Section Name<span class="text-red-600">*</span></Label>
+                                <Input id="section_name" v-model="form.section_name" required />
                                 <InputError :message="form.errors.section_name" />
                             </div>
 

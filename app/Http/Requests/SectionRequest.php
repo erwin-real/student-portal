@@ -24,6 +24,7 @@ class SectionRequest extends FormRequest
         return [
             'level_id' => ['required'],
             'name' => ['required'],
+            'code' => ['nullable'],
             'description' => ['nullable']
         ];
     }

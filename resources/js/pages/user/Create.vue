@@ -49,7 +49,6 @@ const members = props.members;
 const searchQuery = ref('')
 const showDropdown = ref(false)
 const inputError = ref(false)
-const submitting = ref(false)
 
 const form = useForm({
   id: 0,
@@ -114,16 +113,16 @@ const handleSubmit = () => {
   if (!validateMemberSelected() || !form.id) return
 
     form.post(route('users.store'), {
-    preserveScroll: true,
-    onSuccess: () => {
-        // Reset or show success message if needed
-        toast.success('User Created Successfully!')
-        // console.log('Form submitted successfully')
-    },
-    onError: () => {
-        // Errors will already be in `form.errors`
-        console.warn('Form submission failed')
-    }
+        preserveScroll: true,
+        onSuccess: () => {
+            // Reset or show success message if needed
+            toast.success('User Created Successfully!')
+            // console.log('Form submitted successfully')
+        },
+        onError: () => {
+            // Errors will already be in `form.errors`
+            console.warn('Form submission failed')
+        }
     })
 
 }

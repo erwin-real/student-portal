@@ -130,7 +130,7 @@ console.log(props.levels)
             </ScrollArea>
 
             <div class="mt-3 flex justify-between align-center gap-2">
-                <span>Showing <strong>{{ levels.from }} - {{ levels.to }}</strong> of <strong>{{levels.total}}</strong></span>
+                <!-- <span>Showing <strong>{{ levels.from }} - {{ levels.to }}</strong> of <strong>{{levels.total}}</strong></span> -->
                 <div class="space-x-2">
                     <Link :href="link.url ?? ''"
                         v-for="(link, index) in levels.links"

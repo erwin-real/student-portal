@@ -9,6 +9,13 @@ class Section extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'level_id',
+        'name',
+        'code',
+        'description'
+    ];
+
     public function level()
     {
         return $this->belongsTo(Level::class);
