@@ -4,28 +4,37 @@ import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { type BreadcrumbItem } from '@/types';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { capitalize } from 'vue';
+import { capitalize, computed, ref } from 'vue';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import InputError from '@/components/InputError.vue';
 import { toast } from 'vue-sonner';
+import { Separator } from '@/components/ui/separator';
 
-const props = defineProps({
-    faculty: {
-        type: Object,
-        required: true
-    },
-    levels: {
-        type: Array,
-        required: true
-    },
-    sections: {
-        type: Array,
-        required: true
-    }
-})
+interface Section {
+    id: number
+    name: string
+    level_id: number
+}
+
+interface GradeLevel {
+    id: number
+    name: string
+    sections: Section[]
+}
+
+interface AddedItem {
+  gradeLevel: GradeLevel
+  section: Section
+}
+
+const props = defineProps<{
+    faculty: any,
+    gradeLevels: GradeLevel[],
+    existingItems: []
+}>()
 
 const faculty = props.faculty;
 
@@ -37,14 +46,72 @@ const form = useForm({
     address: faculty.member.address,
     date_of_birth: faculty.member.date_of_birth,
     email: faculty.member.email,
-    mobile_no: faculty.member.mobile_no
+    mobile_no: faculty.member.mobile_no,
+    grade_section_mappings: []
 })
 
+const filteredSections = computed(() => {
+    const grade = gradeLevels.value.find(g => g.id === selectedGradeLevelId.value)
+    return grade ? grade.sections : []
+})
+
+const onGradeLevelChange = () => {
+  selectedSectionId.value = null
+}
+
 const handleSubmit = () => {
+    form.grade_section_mappings = addedItems.value.map(item => ({
+        grade_level_id: item.gradeLevel.id,
+        section_id: item.section?.id ?? null,
+    }))
+
     form.put(route('faculties.update', faculty), {
         preserveScroll: true,
         onSuccess: () => toast.success('Faculty Updated Successfully!')
     })
+}
+
+const gradeLevels = ref(props.gradeLevels)
+const selectedGradeLevelId = ref<number | null>(null)
+const selectedSectionId = ref<number | null>(null)
+const addedItems = ref<AddedItem[]>(props.existingItems)
+
+const addItem = () => {
+  const grade = gradeLevels.value.find(g => g.id === selectedGradeLevelId.value)
+  const section = filteredSections.value.find(s => s.id === selectedSectionId.value) || null
+
+  if (!grade) return
+
+  const isGeneralEntry = section === null
+
+  if (isGeneralEntry) {
+    // Remove all existing entries for the same grade level
+    addedItems.value = addedItems.value.filter(item => item.gradeLevel.id !== grade.id)
+    // Add the grade level with no section
+    addedItems.value.push({ gradeLevel: grade, section: null })
+  } else {
+    const generalExists = addedItems.value.some(
+      item => item.gradeLevel.id === grade.id && item.section === null
+    )
+    if (generalExists) {
+      // Do not add specific section if general grade level already exists
+      return
+    }
+
+    const alreadyExists = addedItems.value.some(
+      item => item.gradeLevel.id === grade.id && item.section?.id === section.id
+    )
+    if (!alreadyExists) {
+      addedItems.value.push({ gradeLevel: grade, section })
+    }
+  }
+
+  console.log(addedItems.value)
+  console.log('existingItems', props.existingItems)
+}
+
+const removeItem = (index: number) => {
+  addedItems.value.splice(index, 1)
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -61,6 +128,9 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/faculties',
     },
 ];
+
+console.log(props.faculty)
+console.log(props.gradeLevels)
 </script>
 
 <template>
@@ -103,8 +173,8 @@ const breadcrumbs: BreadcrumbItem[] = [
                                             <SelectValue placeholder="Select gender"/>
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="male">Male</SelectItem>
-                                            <SelectItem value="female">Female</SelectItem>
+                                            <SelectItem value="Male">Male</SelectItem>
+                                            <SelectItem value="Female">Female</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <InputError :message="form.errors.gender" />
@@ -140,9 +210,106 @@ const breadcrumbs: BreadcrumbItem[] = [
 
                             </div>
 
+                            <Separator class="my-4" />
+
+                            <div class="text-lg font-sm">Pick grade levels and sections and assign to this faculty</div>
+
+                            <div class="grid grid-cols-5 gap-6">
+
+                                <div class="grid col-span-2 w-full gap-2">
+                                    <Label for="levels">Grade Levels</Label>
+                                    <Select id="levels" v-model="selectedGradeLevelId" @update:modelValue="onGradeLevelChange">
+                                        <SelectTrigger class="w-full">
+                                            <SelectValue placeholder="Select Grade Level"/>
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem
+                                                v-for="grade in gradeLevels"
+                                                :key="grade.id"
+                                                :value="grade.id"
+                                            >
+                                                {{ capitalize(grade.name) }}
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <!-- <InputError :message="form.errors.level_id" /> -->
+                                </div>
+
+                                <div class="grid col-span-2 w-full gap-2">
+                                    <Label for="section_id">Section</Label>
+                                    <Select id="section_id" v-model="selectedSectionId" :disabled="!filteredSections.length">
+                                        <SelectTrigger class="w-full">
+                                            <SelectValue placeholder="Select section"/>
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem
+                                                v-for="section in filteredSections"
+                                                :key="section.id"
+                                                :value="section.id"
+                                            >
+                                                {{ capitalize(section.name) }}
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <!-- <InputError :message="form.errors.section_id" /> -->
+                                </div>
+
+                                <div class=" col-span-1 grid w-full gap-2">
+                                    <button
+                                        type="button"
+                                        class="mt-4 px-4 py-2 rounded-md bg-blue-600 text-white disabled:opacity-50 cursor-pointer"
+                                        :disabled="!selectedGradeLevelId"
+                                        @click="addItem"
+                                    >
+                                        Add
+                                    </button>
+                                </div>
+
+                            </div>
+
+                            <table class="w-full table-auto border mt-4 text-sm">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="text-left p-2 border">Grade Levels</th>
+                                        <th class="text-left p-2 border">Sections</th>
+                                        <th class="text-left p-2 border">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="(item, index) in addedItems"
+                                        :key="`${item.gradeLevel.id}-${item.section?.id ?? 'null'}`"
+                                    >
+                                        <td class="p-2 border">{{ item.gradeLevel.name }}</td>
+                                        <td class="p-2 border">{{ item.section?.name ?? '—' }}</td>
+                                        <td class="p-2 border">
+                                            <button
+                                                type="button"
+                                                class="text-red-600 hover:underline cursor-pointer"
+                                                @click="removeItem(index)"
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr v-if="addedItems.length === 0">
+                                        <td colspan="3" class="text-center p-2 border text-gray-500">
+                                            No grade level & section added yet.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
                             <div class="flex justify-between items-center">
                                 <Link :class="buttonVariants({variant: 'ghost'})" :href="route('faculties.show', faculty.id)">Cancel</Link>
-                                <Button type="submit" variant="default" :disabled="form.processing">Save faculty info</Button>
+                                <Button
+                                    class="cursor-pointer"
+                                    type="submit"
+                                    variant="default"
+                                    :disabled="form.processing">
+                                    {{ form.processing ? 'Saving...' : 'Save faculty info' }}
+                                </Button>
                             </div>
                         </form>
                     </CardContent>

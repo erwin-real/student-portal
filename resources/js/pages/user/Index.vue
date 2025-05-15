@@ -126,7 +126,7 @@ console.log(props.users)
                             <TableCell>{{ user.role}}</TableCell>
                             <TableCell>{{ user.username}}</TableCell>
                             <TableCell>{{ user.member.date_of_birth}}</TableCell>
-                            <TableCell>{{ capitalize(user.member.gender) }}</TableCell>
+                            <TableCell>{{ user.member.gender }}</TableCell>
                             <TableCell>{{ user.member.email}}</TableCell>
                             <TableCell>{{ user.member.mobile_no}}</TableCell>
                             <!-- <TableCell>{{ user.member.address}}</TableCell> -->

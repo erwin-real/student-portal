@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             'rfid' => '0',
             'first_name' => 'Erwin',
             'last_name' => 'Capati',
-            'gender' => 'male'
+            'gender' => 'Male'
         ]);
 
         User::factory()->create([

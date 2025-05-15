@@ -5,6 +5,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { capitalize } from 'vue';
+import { Separator } from '@/components/ui/separator';
 
 const props = defineProps({
     faculty: {
@@ -23,6 +24,8 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/faculties',
     },
 ];
+
+console.log(props.faculty)
 </script>
 
 <template>
@@ -42,7 +45,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                         </div>
                         <div class="flex items-center space-x-4">
                             <div class="w-32 font-semibold">Middle Name</div>
-                            <div>{{ faculty.member.middle_name }}</div>
+                            <div>{{ faculty.member?.middle_name }}</div>
                         </div>
                         <div class="flex items-center space-x-4">
                             <div class="w-32 font-semibold">Last Name</div>
@@ -50,11 +53,11 @@ const breadcrumbs: BreadcrumbItem[] = [
                         </div>
                         <div class="flex items-center space-x-4">
                             <div class="w-32 font-semibold">Gender</div>
-                            <div>{{ capitalize(faculty.member.gender) }}</div>
+                            <div>{{ faculty.member.gender }}</div>
                         </div>
                         <div class="flex items-center space-x-4">
                             <div class="w-32 font-semibold">Address</div>
-                            <div>{{ faculty.member.address }}</div>
+                            <div>{{ faculty.member?.address }}</div>
                         </div>
                         <div class="flex items-center space-x-4">
                             <div class="w-32 font-semibold">Date of birth</div>
@@ -68,6 +71,31 @@ const breadcrumbs: BreadcrumbItem[] = [
                             <div class="w-32 font-semibold">Mobile No.</div>
                             <div>{{ faculty.member.mobile_no }}</div>
                         </div>
+
+                        <Separator class="my-4" />
+
+                        <div class="text-base font-semibold">Selected grade levels and sections to this faculty</div>
+
+                        <table v-if="faculty.level_sections.length > 0" class="w-full table-auto border mt-4 text-sm">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="text-left p-2 border">Grade Levels</th>
+                                    <th class="text-left p-2 border">Sections</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="item in faculty.level_sections"
+                                    :key="item.id"
+                                >
+                                    <td class="p-2 border">{{ item.level.name }}</td>
+                                    <td class="p-2 border">{{ item.section?.name ?? '—' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <p v-else>*None*</p>
+
                     </CardContent>
                     <CardContent class="space-y-2">
                         <div class="flex justify-between items-center space-x-4 mt-6">

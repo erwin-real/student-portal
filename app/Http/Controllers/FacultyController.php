@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FacultyRequest;
+use App\Models\FacultyLevel;
 use App\Models\Level;
 use App\Models\Member;
 use App\Models\Section;
@@ -17,8 +18,6 @@ class FacultyController extends Controller
     {
 
         $query = Faculty::with(['member']);
-        // $gradeLevel = $request->string('grade_level');
-        // $sectionId = $request->string('section_id');
 
         if ($search = $request->input('search')) {
             $query->when($search, function ($query, $search) {
@@ -29,39 +28,19 @@ class FacultyController extends Controller
             });
         }
 
-        // if ($gradeLevel = $request->input('grade_level')) {
-        //     $query->when(
-        //         $gradeLevel,
-        //         fn($query) =>
-        //         $query->where('level_id', $gradeLevel)
-        //     );
-        // }
-
-        // if ($sectionId = $request->input('section_id')) {
-        //     $query->when(
-        //         $sectionId,
-        //         fn($query) =>
-        //         $query->where('section_id', $sectionId)
-        //     );
-        // }
-
         $faculties = $query->paginate(10)->withQueryString();
 
         return Inertia::render('faculty/Index', [
             'faculties' => $faculties,
             'filters' => [
-                'search' => $search,
-                // 'grade_level_id' => $gradeLevel,
-                // 'section_id' => $sectionId,
-            ],
-            // 'gradeLevels' => Level::select('id', 'name')->get(),
-            // 'sections' => Section::select('id', 'name')->get(),
+                'search' => $search
+            ]
         ]);
     }
 
     public function show(int $facultyID)
     {
-        $faculty = Faculty::find($facultyID)->load(['member']);
+        $faculty = Faculty::with(['member', 'levelSections.level', 'levelSections.section'])->find($facultyID);
 
         return Inertia::render('faculty/Show', [
             'faculty' => $faculty
@@ -70,12 +49,21 @@ class FacultyController extends Controller
 
     public function edit(int $facultyID)
     {
-        $faculty = Faculty::find($facultyID)->load(['member']);
+        $faculty = Faculty::with(['member', 'levelSections.level', 'levelSections.section'])->find($facultyID);
+
+        $existingItems = [];
+
+        foreach ($faculty->levelSections as $levelSection) {
+            array_push($existingItems, [
+                "gradeLevel" => $levelSection->level,
+                "section" => $levelSection->section
+            ]);
+        }
 
         return Inertia::render('faculty/Edit', [
             'faculty' => $faculty,
-            'levels' => Level::orderBy('name')->get(),
-            'sections' => Section::orderBy('name')->get()
+            'gradeLevels' => Level::select('id', 'name')->with('sections')->get(),
+            'existingItems' => $existingItems
         ]);
     }
 
@@ -84,11 +72,6 @@ class FacultyController extends Controller
         $faculty = Faculty::find($facultyID);
 
         $data = $request->validated();
-
-        // $faculty->update([
-        //     'section_id' => $data['section_id'],
-        //     'level_id' => $data['level_id']
-        // ]);
 
         $faculty->member()->update([
             'first_name' => $data['first_name'],
@@ -100,6 +83,20 @@ class FacultyController extends Controller
             'email' => $data['email'],
             'mobile_no' => $data['mobile_no'],
         ]);
+
+        $values = [];
+
+        FacultyLevel::where('faculty_id', $facultyID)->delete();
+
+        foreach ($data['grade_section_mappings'] as $gradeSection) {
+            array_push($values, [
+                "faculty_id" => $facultyID,
+                "level_id" => $gradeSection['grade_level_id'],
+                "section_id" => $gradeSection['section_id']
+            ]);
+        }
+
+        FacultyLevel::insert($values);
 
         return redirect()->route('faculties.show', $facultyID);
     }

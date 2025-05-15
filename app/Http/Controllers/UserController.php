@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
+use App\Models\Faculty;
+use App\Models\FacultyLevel;
 use App\Models\Level;
 use App\Models\Member;
 use App\Models\Section;
@@ -62,7 +64,8 @@ class UserController extends Controller
 
     public function show(int $userID)
     {
-        $user = User::find($userID)->load(['member']);
+        // $user = User::find($userID)->load(['member']);
+        $user = User::with(['member', 'member.faculty.levelSections.level', 'member.faculty.levelSections.section'])->find($userID);
 
         return Inertia::render('user/Show', [
             'user' => $user
@@ -71,12 +74,21 @@ class UserController extends Controller
 
     public function edit(int $userID)
     {
-        $user = User::find($userID)->load(['member']);
+        $user = User::with(['member', 'member.faculty.levelSections.level', 'member.faculty.levelSections.section'])->find($userID);
+
+        $existingItems = [];
+
+        foreach ($user->member->faculty->levelSections as $levelSection) {
+            array_push($existingItems, [
+                "gradeLevel" => $levelSection->level,
+                "section" => $levelSection->section
+            ]);
+        }
 
         return Inertia::render('user/Edit', [
             'user' => $user,
-            'levels' => Level::orderBy('name')->get(),
-            'sections' => Section::orderBy('name')->get()
+            'gradeLevels' => Level::select('id', 'name')->with('sections')->get(),
+            'existingItems' => $existingItems
         ]);
     }
 
@@ -86,16 +98,16 @@ class UserController extends Controller
 
         $data = $userRequest->validated();
 
-        // dd($request, $data);
-
-        $user->update([
-            'username' => $data['username'],
-            'name' => $data['first_name'] . " " . $data['last_name'],
-        ]);
-
         if (isset($data['password']) && !empty($data['password'])) {
             $user->update([
+                'username' => $data['username'],
+                'name' => $data['first_name'] . " " . $data['last_name'],
                 'password' => Hash::make($data['password']),
+            ]);
+        } else {
+            $user->update([
+                'username' => $data['username'],
+                'name' => $data['first_name'] . " " . $data['last_name'],
             ]);
         }
 
@@ -110,6 +122,20 @@ class UserController extends Controller
             'mobile_no' => $data['mobile_no'],
         ]);
 
+        $values = [];
+
+        FacultyLevel::where('faculty_id', $user->member->faculty->id)->delete();
+
+        foreach ($data['grade_section_mappings'] as $gradeSection) {
+            array_push($values, [
+                "faculty_id" => $user->member->faculty->id,
+                "level_id" => $gradeSection['grade_level_id'],
+                "section_id" => $gradeSection['section_id']
+            ]);
+        }
+
+        FacultyLevel::insert($values);
+
         return redirect()->route('users.show', $userID);
     }
 
@@ -117,22 +143,37 @@ class UserController extends Controller
     {
         return Inertia::render('user/Create', [
             'members' => Member::orderBy('first_name')->get(),
-            'levels' => Level::orderBy('name')->get(),
-            'sections' => Section::orderBy('name')->get()
+            'gradeLevels' => Level::select('id', 'name')->with('sections')->get()
         ]);
     }
 
     public function store(UserRequest $userRequest)
     {
         $data = $userRequest->validated();
+        // Product::create($userRequest->validated() + ['user_id' => $userRequest->user()->id]); // 1st way
 
-        // Product::create($request->validated() + ['user_id' => $request->user()->id]); // 1st way
         $user = User::create([
             'member_id' => $data['id'],
             'name' => $data['first_name'] . " " . $data['last_name'],
             'username' => $data['username'],
             'password' => Hash::make($data['password']),
-        ]); // 2nd way
+        ]);
+
+        $faculty = Faculty::create([
+            'member_id' => $data['id']
+        ]);
+
+        $values = [];
+
+        foreach ($data['grade_section_mappings'] as $gradeSection) {
+            array_push($values, [
+                "faculty_id" => $faculty->id,
+                "level_id" => $gradeSection['grade_level_id'],
+                "section_id" => $gradeSection['section_id']
+            ]);
+        }
+
+        FacultyLevel::insert($values);
 
         return redirect()->route('users.show', $user->id);
     }

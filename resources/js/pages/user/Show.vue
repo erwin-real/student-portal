@@ -24,6 +24,8 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/users',
     },
 ];
+
+console.log(props.user)
 </script>
 
 <template>
@@ -51,7 +53,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                         </div>
                         <div class="flex items-center space-x-4">
                             <div class="w-32 font-semibold">Gender</div>
-                            <div>{{ capitalize(user.member.gender) }}</div>
+                            <div>{{ user.member.gender }}</div>
                         </div>
                         <div class="flex items-center space-x-4">
                             <div class="w-32 font-semibold">Address</div>
@@ -70,12 +72,32 @@ const breadcrumbs: BreadcrumbItem[] = [
                             <div>{{ user.member.mobile_no }}</div>
                         </div>
 
-                        <Separator class="my-4" />
-
                         <div class="flex items-center space-x-4">
                             <div class="w-32 font-semibold">Username</div>
                             <div>{{ user.username }}</div>
                         </div>
+
+                        <Separator class="my-4" />
+
+                        <div class="text-base font-semibold">Selected grade levels and sections to this faculty</div>
+
+                        <table v-if="user.member.faculty.level_sections.length > 0" class="w-full table-auto border mt-4 text-sm">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="text-left p-2 border">Grade Levels</th>
+                                    <th class="text-left p-2 border">Sections</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    v-for="item in user.member.faculty.level_sections"
+                                    :key="item.id"
+                                >
+                                    <td class="p-2 border">{{ item.level.name }}</td>
+                                    <td class="p-2 border">{{ item.section?.name ?? '—' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
 
                     </CardContent>
 

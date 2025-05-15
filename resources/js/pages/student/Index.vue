@@ -76,14 +76,14 @@ console.log(props.students)
                     <select v-model="form.grade_level" @change="applyFilters" class="border p-2 rounded">
                         <option value="">All Grades</option>
                         <option v-for="grade in gradeLevels" :key="grade.id" :value="grade.id">
-                        {{ grade.name }}
+                            {{ grade.name }}
                         </option>
                     </select>
 
                     <select v-model="form.section_id" @change="applyFilters" class="border p-2 rounded">
                         <option value="">All Sections</option>
                         <option v-for="section in sections" :key="section.id" :value="section.id">
-                        {{ section.name }}
+                            {{ section.name }}
                         </option>
                     </select>
                 </div>
@@ -112,7 +112,7 @@ console.log(props.students)
                             </TableCell>
                             <TableCell>{{ student.level.name}}</TableCell>
                             <TableCell>{{ student?.section?.name}}</TableCell>
-                            <TableCell>{{ capitalize(student.member.gender) }}</TableCell>
+                            <TableCell>{{ student.member.gender }}</TableCell>
                             <TableCell>{{ student.member.address}}</TableCell>
                             <!-- <TableCell class="space-x-2"> -->
                                 <!-- <Link :href="route('students.show', student.id)" :class="buttonVariants({variant: 'secondary'})">Show</Link> -->

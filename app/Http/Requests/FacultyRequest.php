@@ -40,7 +40,8 @@ class FacultyRequest extends FormRequest
             'address' => ['nullable'],
             'date_of_birth' => ['nullable'],
             'email' => ['nullable'],
-            'mobile_no' => ['nullable']
+            'mobile_no' => ['nullable'],
+            'grade_section_mappings' => ['nullable']
         ];
     }
 }

@@ -93,6 +93,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                             <div class="flex justify-between items-center">
                                 <Link :class="buttonVariants({variant: 'ghost'})" :href="route('levels.index')">Cancel</Link>
                                 <Button
+                                    class="cursor-pointer"
                                     type="submit"
                                     variant="default"
                                     :disabled="form.processing">

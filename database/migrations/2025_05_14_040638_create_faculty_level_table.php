@@ -10,15 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('students', function (Blueprint $table) {
+        Schema::create('faculty_level', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('member_id')->constrained();
+            $table->foreignId('faculty_id')->constrained();
             $table->foreignId('level_id')->constrained();
             $table->foreignId('section_id')->nullable()->constrained();
-            $table->string('student_no')->nullable();
-            $table->string('guardian')->nullable();
-            $table->string('mobile')->nullable();
-            $table->boolean('can_notify')->default(false);
             $table->timestamps();
         });
     }
@@ -28,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('students');
+        Schema::dropIfExists('faculty_level');
     }
 };

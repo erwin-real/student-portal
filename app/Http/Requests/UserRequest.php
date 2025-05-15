@@ -43,7 +43,8 @@ class UserRequest extends FormRequest
             'email' => ['nullable'],
             'mobile_no' => ['nullable'],
             'username' => ['nullable'],
-            'password' => ['nullable']
+            'password' => ['nullable'],
+            'grade_section_mappings' => ['nullable']
         ];
     }
 }

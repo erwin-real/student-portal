@@ -17,4 +17,21 @@ class Faculty extends Model
     {
         return $this->belongsTo(Member::class);
     }
+
+    public function levels()
+    {
+        return $this->belongsToMany(related: Level::class);
+    }
+
+    public function levelSections()
+    {
+        return $this->hasMany(FacultyLevel::class);
+    }
+
+    // public function levels()
+    // {
+    //     return $this->belongsToMany(related: Level::class)
+    //         ->using(FacultyLevel::class)
+    //         ->withPivot(['section_id']);
+    // }
 }

@@ -21,7 +21,7 @@ class MemberFactory extends Factory
             'first_name' => fake()->firstName(),
             'middle_name' => fake()->lastName(),
             'last_name' => fake()->lastName(),
-            'gender' => $this->faker->randomElement(['male', 'female']),
+            'gender' => $this->faker->randomElement(['Male', 'Female']),
             'address' => fake()->address(),
             'date_of_birth' => fake()->date(),
             'email' => fake()->email(),

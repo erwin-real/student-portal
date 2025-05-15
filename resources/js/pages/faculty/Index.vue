@@ -115,7 +115,7 @@ console.log(props.faculties)
                                 </Link>
                             </TableCell>
                             <TableCell>{{ faculty.member.date_of_birth}}</TableCell>
-                            <TableCell>{{ capitalize(faculty.member.gender) }}</TableCell>
+                            <TableCell>{{ faculty.member.gender }}</TableCell>
                             <TableCell>{{ faculty.member.email}}</TableCell>
                             <TableCell>{{ faculty.member.mobile_no}}</TableCell>
                             <TableCell>{{ faculty.member.address}}</TableCell>

@@ -105,8 +105,8 @@ const breadcrumbs: BreadcrumbItem[] = [
                                             <SelectValue placeholder="Select gender"/>
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="male">Male</SelectItem>
-                                            <SelectItem value="female">Female</SelectItem>
+                                            <SelectItem value="Male">Male</SelectItem>
+                                            <SelectItem value="Female">Female</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <InputError :message="form.errors.gender" />
@@ -176,6 +176,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                             <div class="flex justify-between items-center">
                                 <Link :class="buttonVariants({variant: 'ghost'})" :href="route('students.show', student.id)">Cancel</Link>
                                 <Button
+                                    class="cursor-pointer"
                                     type="submit"
                                     variant="default"
                                     :disabled="form.processing">
