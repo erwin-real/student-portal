@@ -50,6 +50,11 @@ const searchStudents = debounce(applyFilters, 300)
 
 const onGradeLevelChange = () => {
     form.section_id = null
+    if (form.grade_level === "all") form.grade_level = null
+}
+
+const onSectionChange = () => {
+    if (form.section_id === "all") form.section_id = null
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -68,6 +73,7 @@ const breadcrumbs: BreadcrumbItem[] = [
             <Heading title="Students" description="Manage students" />
             <div class="m-3 space-x-3">
                 <div class="flex flex-col md:flex-row gap-4 items-center w-full">
+
                     <!-- Search Input with Icon -->
                     <div class="relative w-full md:w-1/3">
                         <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-gray-500">
@@ -87,6 +93,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                             <SelectValue placeholder="Select Grade Level" />
                         </SelectTrigger>
                         <SelectContent>
+                            <SelectItem value="all">All Grade Levels</SelectItem>
                             <SelectItem
                                 v-for="level in gradeLevels"
                                 :key="level.id"
@@ -102,11 +109,13 @@ const breadcrumbs: BreadcrumbItem[] = [
                         v-model="form.section_id"
                         :disabled="!props.filteredSections.length"
                         @vue:updated="applyFilters"
+                        @update:modelValue="onSectionChange"
                     >
                         <SelectTrigger class="w-full md:w-1/3">
                             <SelectValue placeholder="Select Section" />
                         </SelectTrigger>
                         <SelectContent>
+                            <SelectItem value="all">All Sections</SelectItem>
                             <SelectItem
                                 v-for="sec in props.filteredSections"
                                 :key="sec.id"
@@ -116,28 +125,8 @@ const breadcrumbs: BreadcrumbItem[] = [
                             </SelectItem>
                         </SelectContent>
                     </Select>
+
                 </div>
-
-                <!-- <div class="relative space-x-3">
-                    <input v-model="form.search" @input="searchStudents" id="search" type="text" placeholder="Search student" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
-                    <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
-                        <Search class="size-6 text-muted-foreground" />
-                    </span>
-
-                    <select v-model="form.grade_level" @change="applyFilters" class="border p-2 rounded">
-                        <option value="">All Grades</option>
-                        <option v-for="grade in gradeLevels" :key="grade.id" :value="grade.id">
-                            {{ grade.name }}
-                        </option>
-                    </select>
-
-                    <select v-model="form.section_id" @change="applyFilters" class="border p-2 rounded">
-                        <option value="">All Sections</option>
-                        <option v-for="section in sections" :key="section.id" :value="section.id">
-                            {{ section.name }}
-                        </option>
-                    </select>
-                </div> -->
             </div>
         </div>
 
