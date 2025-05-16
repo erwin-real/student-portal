@@ -10,6 +10,7 @@ import { computed, reactive, ref, watch } from 'vue';
 import { debounce } from 'lodash';
 import Heading from '@/components/Heading.vue';
 import { capitalize } from 'vue';
+import { Input } from '@/components/ui/input';
 
 const props = defineProps({
     faculties: {
@@ -19,21 +20,11 @@ const props = defineProps({
     filters:  {
         type: Object,
         required: true
-    },
-    // gradeLevels:  {
-    //     type: Array,
-    //     required: true
-    // },
-    // sections:  {
-    //     type: Array,
-    //     required: true
-    // }
+    }
 })
 
 const form = reactive({
   search: props.filters.search || '',
-//   grade_level: props.filters.grade_level || '',
-//   section_id: props.filters.section_id || '',
 })
 
 const searchFaculties = debounce(() => {
@@ -43,21 +34,12 @@ const searchFaculties = debounce(() => {
   })
 }, 300)
 
-// function applyFilters() {
-//   router.get(route('faculties.index'), { ...form }, {
-//     preserveState: true,
-//     replace: true,
-//   })
-// }
-
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Faculties',
         href: '/faculties',
     },
 ];
-
-console.log(props.faculties)
 
 </script>
 
@@ -69,29 +51,18 @@ console.log(props.faculties)
             <Heading title="Faculties" description="Manage faculties" />
             <div class="m-3">
                 <div class="relative w-full max-w-sm items-center">
-                    <input v-model="form.search" @input="searchFaculties" id="search" type="text" placeholder="Search faculty" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
-                    <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
-                        <Search class="size-6 text-muted-foreground" />
+                    <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-gray-500">
+                        <Search class="h-4 w-4" />
                     </span>
+                    <Input
+                        v-model="form.search"
+                        placeholder="Search faculty"
+                        class="pl-10"
+                        @input="searchFaculties"
+                    />
                 </div>
             </div>
         </div>
-
-        <!-- <div class="ml-3 mb-3 space-x-3">
-            <select v-model="form.grade_level" @change="applyFilters" class="border p-2 rounded">
-                <option value="">All Grades</option>
-                <option v-for="grade in gradeLevels" :key="grade.id" :value="grade.id">
-                {{ grade.name }}
-                </option>
-            </select>
-
-            <select v-model="form.section_id" @change="applyFilters" class="border p-2 rounded">
-                <option value="">All Sections</option>
-                <option v-for="section in sections" :key="section.id" :value="section.id">
-                {{ section.name }}
-                </option>
-            </select>
-        </div> -->
 
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <ScrollArea>
@@ -104,7 +75,6 @@ console.log(props.faculties)
                             <TableHead>Email</TableHead>
                             <TableHead>Mobile No</TableHead>
                             <TableHead>Address</TableHead>
-                            <!-- <TableHead class="w-[120px]">Actions</TableHead> -->
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -119,12 +89,6 @@ console.log(props.faculties)
                             <TableCell>{{ faculty.member.email}}</TableCell>
                             <TableCell>{{ faculty.member.mobile_no}}</TableCell>
                             <TableCell>{{ faculty.member.address}}</TableCell>
-
-                            <!-- <TableCell class="space-x-2"> -->
-                                <!-- <Link :href="route('faculties.show', faculty.id)" :class="buttonVariants({variant: 'secondary'})">Show</Link> -->
-                                <!-- <Link :href="route('faculties.edit', faculty.id)" :class="buttonVariants({variant: 'default'})">Edit</Link> -->
-                                <!-- Show Edit Delete -->
-                            <!-- </TableCell> -->
                         </TableRow>
                     </TableBody>
                 </Table>

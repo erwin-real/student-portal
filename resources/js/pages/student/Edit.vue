@@ -4,7 +4,7 @@ import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { type BreadcrumbItem } from '@/types';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { capitalize } from 'vue';
+import { capitalize, computed, ref } from 'vue';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
@@ -12,22 +12,28 @@ import { Label } from '@/components/ui/label';
 import InputError from '@/components/InputError.vue';
 import { toast } from 'vue-sonner';
 
-const props = defineProps({
-    student: {
-        type: Object,
-        required: true
-    },
-    levels: {
-        type: Array,
-        required: true
-    },
-    sections: {
-        type: Array,
-        required: true
-    }
-})
+interface Section {
+    id: number
+    name: string
+    level_id: number
+}
+
+interface GradeLevel {
+    id: number
+    name: string
+    sections: Section[]
+}
+
+const props = defineProps<{
+    student: any
+    levels: GradeLevel[]
+}>()
 
 const student = props.student;
+const filteredSections = computed(()=> {
+    const grade = props.levels.find(level => level.id == form.level_id)
+    return grade ? grade.sections : []
+})
 
 const form = useForm({
     first_name: student.member.first_name,
@@ -41,6 +47,10 @@ const form = useForm({
     level_id: student.level.id,
     section_id: student?.section?.id
 })
+
+const onGradeLevelChange = () => {
+    form.section_id = null
+}
 
 const handleSubmit = () => {
     form.put(route('students.update', student), {
@@ -146,7 +156,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
                                 <div class="grid w-full gap-2">
                                     <Label for="level_id">Grade Level</Label>
-                                    <Select id="level_id" v-model="form.level_id">
+                                    <Select id="level_id" v-model="form.level_id" @update:model-value="onGradeLevelChange">
                                         <SelectTrigger class="w-full">
                                             <SelectValue placeholder="Select Grade Level"/>
                                         </SelectTrigger>
@@ -161,12 +171,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 
                                 <div class="grid w-full gap-2">
                                     <Label for="section_id">Section</Label>
-                                    <Select id="section_id" v-model="form.section_id">
+                                    <Select id="section_id" v-model="form.section_id" :disabled="!filteredSections.length">
                                         <SelectTrigger class="w-full">
                                             <SelectValue placeholder="Select section"/>
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem v-for="section in sections" :key="section.id" :value="section.id">{{ capitalize(section.name) }}</SelectItem>
+                                            <SelectItem v-for="section in filteredSections" :key="section.id" :value="section.id">{{ capitalize(section.name) }}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <InputError :message="form.errors.section_id" />

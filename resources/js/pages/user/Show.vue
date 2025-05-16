@@ -25,7 +25,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-console.log(props.user)
 </script>
 
 <template>
@@ -81,7 +80,7 @@ console.log(props.user)
 
                         <div class="text-base font-semibold">Selected grade levels and sections to this faculty</div>
 
-                        <table v-if="user.member.faculty.level_sections.length > 0" class="w-full table-auto border mt-4 text-sm">
+                        <table v-if="user.member.faculty && user.member.faculty.level_sections.length > 0" class="w-full table-auto border mt-4 text-sm">
                             <thead class="bg-gray-100">
                                 <tr>
                                     <th class="text-left p-2 border">Grade Levels</th>

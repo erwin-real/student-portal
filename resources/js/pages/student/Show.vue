@@ -50,7 +50,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                         </div>
                         <div class="flex items-center space-x-4">
                             <div class="w-32 font-semibold">Gender</div>
-                            <div>{{ capitalize(student.member.gender) }}</div>
+                            <div>{{ student.member.gender }}</div>
                         </div>
                         <div class="flex items-center space-x-4">
                             <div class="w-32 font-semibold">Address</div>

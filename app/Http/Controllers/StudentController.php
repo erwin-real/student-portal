@@ -51,11 +51,11 @@ class StudentController extends Controller
             'students' => $students,
             'filters' => [
                 'search' => $search,
-                'grade_level_id' => $gradeLevel,
+                'grade_level' => $gradeLevel,
                 'section_id' => $sectionId,
             ],
             'gradeLevels' => Level::select('id', 'name')->get(),
-            'sections' => Section::select('id', 'name')->get(),
+            'filteredSections' => Section::where('level_id', $gradeLevel)->select('id', 'name', 'level_id')->get()
         ]);
     }
 
@@ -86,8 +86,7 @@ class StudentController extends Controller
 
         return Inertia::render('student/Edit', [
             'student' => $student,
-            'levels' => Level::orderBy('name')->get(),
-            'sections' => Section::orderBy('name')->get()
+            'levels' => Level::with('sections')->get()
         ]);
     }
 
@@ -98,12 +97,9 @@ class StudentController extends Controller
         $data = $request->validated();
 
         $student->update([
-            'level_id' => $data['level_id']
+            'level_id' => $data['level_id'],
+            'section_id' => $data['section_id']
         ]);
-
-        if (isset($data['section_id']) && !empty($data['section_id'])) {
-            $student->update(['section_id' => $data['section_id']]);
-        }
 
         $student->member()->update([
             'first_name' => $data['first_name'],
@@ -115,14 +111,6 @@ class StudentController extends Controller
             'email' => $data['email'],
             'mobile_no' => $data['mobile_no'],
         ]);
-
-        // dd($request->validated(), $student);
-
-        // $student->load([
-        //     'member',
-        //     'level',
-        //     'section'
-        // ]);
 
         return redirect()->route('students.show', $studentID);
     }

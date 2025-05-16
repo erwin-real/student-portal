@@ -163,7 +163,6 @@ const addItem = () => {
   }
 }
 
-
 const removeItem = (index: number) => {
   addedItems.value.splice(index, 1)
 }
@@ -188,7 +187,6 @@ const handleSubmit = () => {
 
 }
 
-console.log(members)
 </script>
 
 <template>

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\LevelController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -51,6 +52,15 @@ Route::group(['middleware' => 'auth'], function () {
         // Route::get('/{id}', [LevelController::class, 'show'])->name('levels.show');
         // Route::get('/{id}/edit', [LevelController::class, 'edit'])->name('levels.edit');
         // Route::match(['put', 'patch'], '/{student}', [LevelController::class, 'update'])->name('levels.update');
+    });
+
+    Route::group(['prefix' => 'reports'], function () {
+        Route::get('/', [ReportController::class, 'index'])->name('reports.index');
+        // Route::get('/create', [ReportController::class, 'create'])->name(name: 'reports.create');
+        // Route::post('/', [ReportController::class, 'store'])->name('reports.store');
+        // Route::get('/{id}', [ReportController::class, 'show'])->name('reports.show');
+        // Route::get('/{id}/edit', [ReportController::class, 'edit'])->name('levels.edit');
+        // Route::match(['put', 'patch'], '/{student}', [ReportController::class, 'update'])->name('reports.update');
     });
 
 });

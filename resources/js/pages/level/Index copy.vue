@@ -9,7 +9,6 @@ import { Plus, Search } from 'lucide-vue-next';
 import { computed, reactive, ref, watch } from 'vue';
 import { debounce } from 'lodash';
 import Heading from '@/components/Heading.vue';
-import { Input } from '@/components/ui/input';
 
 const props = defineProps({
     levels: {
@@ -19,11 +18,21 @@ const props = defineProps({
     filters:  {
         type: Object,
         required: true
-    }
+    },
+    // gradeLevels:  {
+    //     type: Array,
+    //     required: true
+    // },
+    // sections:  {
+    //     type: Array,
+    //     required: true
+    // }
 })
 
 const form = reactive({
-  search: props.filters.search || ''
+  search: props.filters.search || '',
+//   grade_level: props.filters.grade_level || '',
+//   section_id: props.filters.section_id || '',
 })
 
 const searchLevels = debounce(() => {
@@ -33,12 +42,21 @@ const searchLevels = debounce(() => {
   })
 }, 300)
 
+// function applyFilters() {
+//   router.get(route('levels.index'), { ...form }, {
+//     preserveState: true,
+//     replace: true,
+//   })
+// }
+
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Sections',
         href: '/levels',
     },
 ];
+
+console.log(props.levels)
 
 </script>
 
@@ -51,17 +69,10 @@ const breadcrumbs: BreadcrumbItem[] = [
             <div class="m-3 flex justify-between align-center gap-2">
 
                 <div class="relative w-full max-w-sm items-center">
-
-                    <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-gray-500">
-                        <Search class="h-4 w-4" />
+                    <input v-model="form.search" @input="searchLevels" id="search" type="text" placeholder="Search level" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
+                    <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
+                        <Search class="size-6 text-muted-foreground" />
                     </span>
-                    <Input
-                        v-model="form.search"
-                        placeholder="Search level"
-                        class="pl-10"
-                        @input="searchLevels"
-                    />
-
                 </div>
 
                 <Link :href="route('levels.create')" :class="buttonVariants({variant: 'default'})">
@@ -72,6 +83,22 @@ const breadcrumbs: BreadcrumbItem[] = [
             </div>
         </div>
 
+        <!-- <div class="ml-3 mb-3 space-x-3">
+            <select v-model="form.grade_level" @change="applyFilters" class="border p-2 rounded">
+                <option value="">All Grades</option>
+                <option v-for="grade in gradeLevels" :key="grade.id" :value="grade.id">
+                {{ grade.name }}
+                </option>
+            </select>
+
+            <select v-model="form.section_id" @change="applyFilters" class="border p-2 rounded">
+                <option value="">All Sections</option>
+                <option v-for="section in sections" :key="section.id" :value="section.id">
+                {{ section.name }}
+                </option>
+            </select>
+        </div> -->
+
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <ScrollArea>
                 <Table>
@@ -79,6 +106,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                         <TableRow>
                             <TableHead>Grade Levels</TableHead>
                             <TableHead>Sections</TableHead>
+                            <!-- <TableHead>Code</TableHead> -->
                             <TableHead>Description</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -87,12 +115,14 @@ const breadcrumbs: BreadcrumbItem[] = [
                             <TableRow v-if="level.sections.length > 0" v-for="section in level.sections" :key="section.id">
                                 <TableCell>{{ level.name }}</TableCell>
                                 <TableCell>{{ section.name }}</TableCell>
+                                <!-- <TableCell>{{ section.code }}</TableCell> -->
                                 <TableCell>{{ section.description }}</TableCell>
                             </TableRow>
                             <TableRow v-else>
                                 <TableCell>{{ level.name}}</TableCell>
                                 <TableCell class="border px-4 py-2 text-gray-400 italic">—</TableCell>
                                 <TableCell class="border px-4 py-2 text-gray-400 italic">—</TableCell>
+                                <!-- <TableCell class="border px-4 py-2 text-gray-400 italic">—</TableCell> -->
                             </TableRow>
                         </template>
                     </TableBody>

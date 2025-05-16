@@ -9,6 +9,7 @@ import { Search, Plus } from 'lucide-vue-next';
 import { capitalize, computed, reactive, ref, watch } from 'vue';
 import { debounce } from 'lodash';
 import Heading from '@/components/Heading.vue';
+import { Input } from '@/components/ui/input';
 
 const props = defineProps({
     users: {
@@ -56,8 +57,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-console.log(props.users)
-
 </script>
 
 <template>
@@ -69,10 +68,15 @@ console.log(props.users)
             <div class="m-3 flex justify-between align-center gap-2">
 
                 <div class="relative w-full max-w-sm items-center">
-                    <input v-model="form.search" @input="searchUsers" id="search" type="text" placeholder="Search user" class="p-1 pl-10 border-1 border-gray-400 focus:border-gray-700 rounded" />
-                    <span class="absolute start-0 inset-y-0 flex items-center justify-center px-2">
-                        <Search class="size-6 text-muted-foreground" />
+                    <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-gray-500">
+                        <Search class="h-4 w-4" />
                     </span>
+                    <Input
+                        v-model="form.search"
+                        placeholder="Search user"
+                        class="pl-10"
+                        @input="searchUsers"
+                    />
                 </div>
 
                 <Link :href="route('users.create')" :class="buttonVariants({variant: 'default'})">
@@ -83,22 +87,6 @@ console.log(props.users)
             </div>
 
         </div>
-
-        <!-- <div class="ml-3 mb-3 space-x-3">
-            <select v-model="form.grade_level" @change="applyFilters" class="border p-2 rounded">
-                <option value="">All Grades</option>
-                <option v-for="grade in gradeLevels" :key="grade.id" :value="grade.id">
-                {{ grade.name }}
-                </option>
-            </select>
-
-            <select v-model="form.section_id" @change="applyFilters" class="border p-2 rounded">
-                <option value="">All Sections</option>
-                <option v-for="section in sections" :key="section.id" :value="section.id">
-                {{ section.name }}
-                </option>
-            </select>
-        </div> -->
 
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <ScrollArea>
