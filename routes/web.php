@@ -5,8 +5,16 @@ use App\Http\Controllers\LevelController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
+use App\Models\Member;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
+
+Route::get('/test', function () {
+
+})->name('test');
+
+// Route::get('/preview-pdf', [ReportController::class, 'preview']);
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -15,10 +23,6 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
-
-// Route::get('students', function () {
-//     return Inertia::render('Students');
-// })->middleware(['auth', 'verified'])->name('members');
 
 Route::group(['middleware' => 'auth'], function () {
 
@@ -49,13 +53,12 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/', [LevelController::class, 'index'])->name('levels.index');
         Route::get('/create', [LevelController::class, 'create'])->name(name: 'levels.create');
         Route::post('/', [LevelController::class, 'store'])->name('levels.store');
-        // Route::get('/{id}', [LevelController::class, 'show'])->name('levels.show');
-        // Route::get('/{id}/edit', [LevelController::class, 'edit'])->name('levels.edit');
-        // Route::match(['put', 'patch'], '/{student}', [LevelController::class, 'update'])->name('levels.update');
     });
 
     Route::group(['prefix' => 'reports'], function () {
         Route::get('/', [ReportController::class, 'index'])->name('reports.index');
+        Route::post('/preview-pdf-daily', [ReportController::class, 'dailyReport'])->name('reports.daily');
+        Route::post('/preview-pdf-detailed', [ReportController::class, 'detailedReport'])->name('reports.detailed');
         // Route::get('/create', [ReportController::class, 'create'])->name(name: 'reports.create');
         // Route::post('/', [ReportController::class, 'store'])->name('reports.store');
         // Route::get('/{id}', [ReportController::class, 'show'])->name('reports.show');

@@ -64,7 +64,6 @@ class UserController extends Controller
 
     public function show(int $userID)
     {
-        // $user = User::find($userID)->load(['member']);
         $user = User::with(['member', 'member.faculty.levelSections.level', 'member.faculty.levelSections.section'])->find($userID);
 
         return Inertia::render('user/Show', [
@@ -78,11 +77,13 @@ class UserController extends Controller
 
         $existingItems = [];
 
-        foreach ($user->member->faculty->levelSections as $levelSection) {
-            array_push($existingItems, [
-                "gradeLevel" => $levelSection->level,
-                "section" => $levelSection->section
-            ]);
+        if ($user->member->faculty?->levelSections) {
+            foreach ($user->member->faculty->levelSections as $levelSection) {
+                array_push($existingItems, [
+                    "gradeLevel" => $levelSection->level,
+                    "section" => $levelSection->section
+                ]);
+            }
         }
 
         return Inertia::render('user/Edit', [

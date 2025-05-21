@@ -3,14 +3,16 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search } from 'lucide-vue-next';
 import { capitalize, computed, onMounted, reactive, ref, watch } from 'vue';
 import { debounce } from 'lodash';
 import Heading from '@/components/Heading.vue';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import axios from 'axios';
 
 interface Section {
     id: number
@@ -57,6 +59,46 @@ const onSectionChange = () => {
     if (form.section_id === 'all') form.section_id = null
 }
 
+const reportTypes = ['Detailed Daily Attendance Logs', 'Daily Attendance']
+
+const reportType = ref('')
+const fromDate = ref('')
+const toDate = ref('')
+
+const dateError = computed(() => {
+  if (fromDate.value && toDate.value) {
+    if (fromDate.value > toDate.value) {
+      return '"From" date cannot be after "To" date.'
+    }
+    if (toDate.value < fromDate.value) {
+      return '"To" date cannot be before "From" date.'
+    }
+  }
+  return ''
+})
+
+const previewPdf = async (memberID: string) => {
+  const formData = new FormData()
+  formData.append('fromDate', fromDate.value)
+  formData.append('toDate', toDate.value)
+  formData.append('reportType', reportType.value)
+  formData.append('memberID', memberID)
+
+  try {
+    const endpoint = `/reports/preview-pdf-${reportType.value === 'Daily Attendance' ? 'daily' : 'detailed'}`;
+
+    const response = await axios.post(endpoint, formData, {
+      responseType: 'blob',
+    })
+
+    const blob = new Blob([response.data], { type: 'application/pdf' })
+    const url = URL.createObjectURL(blob)
+    window.open(url, '_blank')
+  } catch (error) {
+    console.error('Failed to generate PDF', error)
+  }
+}
+
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Reports',
@@ -71,6 +113,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="m-3">
             <Heading title="Reports" description="Manage reports" />
+            <Label>Filters:</Label>
             <div class="m-3 space-x-3">
                 <div class="flex flex-col md:flex-row gap-4 items-center w-full">
                     <!-- Search Input with Icon -->
@@ -133,6 +176,66 @@ const breadcrumbs: BreadcrumbItem[] = [
             </div>
         </div>
 
+        <div class="max-w-3xl mx-auto p-6 space-y-6">
+            <!-- Type of Report -->
+            <div class="flex justify-center items-center space-x-4">
+                <label for="reportType" class="text-right text-gray-700 font-medium">
+                    Type of Report
+                </label>
+                <Select v-model="reportType">
+                    <SelectTrigger class="w-[220px]">
+                        <SelectValue placeholder="Select report type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem v-for="type in reportTypes" :key="type" :value="type">
+                            {{ type }}
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+
+            <!-- Date Range (From & To) -->
+            <div class="flex justify-center items-center space-x-6">
+                <!-- From Date -->
+                <div class="flex items-center space-x-4">
+                    <label for="fromDate" class="w-24 text-right text-gray-700 font-medium">
+                    From Date
+                    </label>
+                    <Input
+                        id="fromDate"
+                        type="date"
+                        v-model="fromDate"
+                        class="w-[180px]"
+                        :class="{
+                            'border-red-500': fromDate && toDate && fromDate > toDate,
+                        }"
+                    />
+                </div>
+
+                <!-- To Date -->
+                <div class="flex items-center space-x-4">
+                    <label for="toDate" class="w-20 text-right text-gray-700 font-medium">
+                    To Date
+                    </label>
+                    <Input
+                        id="toDate"
+                        type="date"
+                        v-model="toDate"
+                        class="w-[180px]"
+                        :class="{
+                            'border-red-500': fromDate && toDate && toDate < fromDate,
+                        }"
+                    />
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div v-if="dateError" class="text-center text-red-600 font-medium">
+                {{ dateError }}
+            </div>
+
+        </div>
+
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <ScrollArea>
                 <Table>
@@ -147,12 +250,20 @@ const breadcrumbs: BreadcrumbItem[] = [
                     </TableHeader>
                     <TableBody>
                         <TableRow v-for="member in members.data" :key="member.id">
-                            <TableCell>{{ member.first_name }} {{ member.last_name}}</TableCell>
-                            <TableCell>{{  member.faculty ? 'faculty' : 'student'}}</TableCell>
-                            <TableCell>{{ member.student?.level?.name ?? '---'}}</TableCell>
-                            <TableCell>{{ member.student?.section?.name ?? '---'}}</TableCell>
+                            <TableCell>{{ member.first_name }} {{ member.last_name }}</TableCell>
+                            <TableCell>{{ member?.user?.role ?? '---' }}</TableCell>
+                            <TableCell>{{ member.student?.level?.name ?? '---' }}</TableCell>
+                            <TableCell>{{ member.student?.section?.name ?? '---' }}</TableCell>
                             <TableCell class="space-x-2">
-                                <Link :href="route('reports.index', member.id)" :class="buttonVariants({variant: 'secondary'})">Print</Link>
+                                <!-- <Link :href="route('reports.index', member.id)" :class="buttonVariants({variant: 'secondary'})">Print</Link> -->
+                                 <Button
+                                    @click="previewPdf(member.linked_member_id)"
+                                    :class="buttonVariants({variant: 'secondary'})"
+                                    class="cursor-pointer"
+                                    :disabled="!!dateError || !reportType"
+                                >
+                                    Print
+                                </Button>
                             </TableCell>
                         </TableRow>
                     </TableBody>

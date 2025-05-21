@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('members', function (Blueprint $table) {
             $table->id();
-            $table->bigin('linked_member_id')->default(0);
+            $table->bigInteger('linked_member_id')->default(0);
             $table->string('rfid')->nullable();
             $table->string('first_name');
             $table->string('middle_name')->nullable();
