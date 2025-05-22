@@ -72,6 +72,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/', 'index')->name('levels.index');
             Route::get('/create', 'create')->name(name: 'levels.create');
             Route::post('/', 'store')->name('levels.store');
+            Route::get('/{id}', 'show')->name('levels.show');
+            Route::get('/{id}/edit', 'edit')->name('levels.edit');
         });
 
     Route::group(['prefix' => 'reports'], function () {

@@ -36,21 +36,21 @@ class LevelController extends Controller
         ]);
     }
 
+    public function show(int $sectionID)
+    {
+        $section = Section::with(['level'])->find($sectionID);
+
+        return Inertia::render('level/Show', [
+            'section' => $section
+        ]);
+    }
+
     public function create()
     {
         return Inertia::render('level/Create', [
             'gradeLevels' => Level::orderBy('id')->get()
         ]);
     }
-
-    // public function store(SectionRequest $sectionRequest)
-    // {
-    //     dd($sectionRequest);
-    //     // Product::create($request->validated() + ['user_id' => $request->user()->id]); // 1st way
-    //     Section::create($sectionRequest->validated()); // 2nd way
-
-    //     return redirect()->route('levels.index');
-    // }
 
     public function store(Request $request)
     {

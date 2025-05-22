@@ -77,15 +77,20 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Grade Levels</TableHead>
                             <TableHead>Sections</TableHead>
+                            <TableHead>Grade Levels</TableHead>
                             <TableHead>Description</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         <TableRow v-if="sections.data.length > 0" v-for="section in sections.data" :key="section.id">
+                            <TableCell>
+                                <Link :href="route('levels.show', section.id)" class="hover:text-blue-900 text-blue-500">
+                                    {{ section.name}}
+                                </Link>
+                            </TableCell>
+                            <!-- <TableCell>{{ section.name }}</TableCell> -->
                             <TableCell>{{ section.level.name }}</TableCell>
-                            <TableCell>{{ section.name }}</TableCell>
                             <TableCell>{{ section.description ?? '---' }}</TableCell>
                         </TableRow>
                         <!-- <template v-for="level in levels.data" :key="level.id">
