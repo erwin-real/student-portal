@@ -16,12 +16,11 @@ use Inertia\Inertia;
 
 class UserController extends Controller
 {
+
     public function index(Request $request)
     {
 
         $query = User::with(['member']);
-        // $gradeLevel = $request->string('grade_level');
-        // $sectionId = $request->string('section_id');
 
         if ($search = $request->input('search')) {
             $query->when($search, function ($query, $search) {
@@ -32,33 +31,14 @@ class UserController extends Controller
             });
         }
 
-        // if ($gradeLevel = $request->input('grade_level')) {
-        //     $query->when(
-        //         $gradeLevel,
-        //         fn($query) =>
-        //         $query->where('level_id', $gradeLevel)
-        //     );
-        // }
-
-        // if ($sectionId = $request->input('section_id')) {
-        //     $query->when(
-        //         $sectionId,
-        //         fn($query) =>
-        //         $query->where('section_id', $sectionId)
-        //     );
-        // }
-
         $users = $query->paginate(10)->withQueryString();
 
         return Inertia::render('user/Index', [
             'users' => $users,
-            'filters' => [
-                'search' => $search,
-                // 'grade_level_id' => $gradeLevel,
-                // 'section_id' => $sectionId,
-            ],
+            'filters' => ['search' => $search],
             'gradeLevels' => Level::select('id', 'name')->get(),
             'sections' => Section::select('id', 'name')->get(),
+            'loggedInUser' => $request->user()
         ]);
     }
 
@@ -151,7 +131,8 @@ class UserController extends Controller
     public function store(UserRequest $userRequest)
     {
         $data = $userRequest->validated();
-        // Product::create($userRequest->validated() + ['user_id' => $userRequest->user()->id]); // 1st way
+
+        $member = Member::find($data['id']);
 
         $user = User::create([
             'member_id' => $data['id'],
@@ -160,15 +141,11 @@ class UserController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        $faculty = Faculty::create([
-            'member_id' => $data['id']
-        ]);
-
         $values = [];
 
         foreach ($data['grade_section_mappings'] as $gradeSection) {
             array_push($values, [
-                "faculty_id" => $faculty->id,
+                "faculty_id" => $member->faculty->id,
                 "level_id" => $gradeSection['grade_level_id'],
                 "section_id" => $gradeSection['section_id']
             ]);

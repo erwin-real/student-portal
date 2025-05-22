@@ -18,20 +18,26 @@ class Faculty extends Model
         return $this->belongsTo(Member::class);
     }
 
-    public function levels()
-    {
-        return $this->belongsToMany(related: Level::class);
-    }
+    // public function levels()
+    // {
+    //     return $this->belongsToMany(related: Level::class);
+    // }
 
     public function levelSections()
     {
         return $this->hasMany(FacultyLevel::class);
     }
 
-    // public function levels()
-    // {
-    //     return $this->belongsToMany(related: Level::class)
-    //         ->using(FacultyLevel::class)
-    //         ->withPivot(['section_id']);
-    // }
+    public function levels()
+    {
+        return $this->hasManyThrough(
+            Level::class,
+            FacultyLevel::class,
+            'faculty_id',     // Foreign key on FacultyLevelSection
+            'id',             // Local key on Level
+            'id',             // Local key on Faculty
+            'level_id'        // Foreign key on FacultyLevelSection
+        )->distinct()->orderBy('id');
+    }
+
 }

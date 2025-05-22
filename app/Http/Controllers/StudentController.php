@@ -4,21 +4,52 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StudentRequest;
+use App\Models\FacultyLevel;
 use App\Models\Level;
 use App\Models\Member;
 use App\Models\Section;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class StudentController extends Controller
 {
     public function index(Request $request)
     {
+        // dd(Auth::user(), Auth::user()->role);
 
-        $query = Student::with(['member', 'level', 'section']);
-        $gradeLevel = $request->string('grade_level');
-        $sectionId = $request->string('section_id');
+        switch (Auth::user()->role) {
+            case 'admin':
+                $query = Student::with(['member', 'level', 'section']);
+                $gradeLevels = Level::select('id', 'name')->get();
+                break;
+
+            case 'faculty':
+                $facultyId = Auth::user()->member->faculty->id;
+
+                // Step 1: Get all (level_id, section_id) pairs the faculty is assigned to
+                $assignments = FacultyLevel::where('faculty_id', $facultyId)
+                    ->get(['level_id', 'section_id']);
+
+                // Step 2: Build the query to match students with those pairs
+                $query = Student::with(['member', 'level', 'section'])
+                    ->where(function ($query) use ($assignments) {
+                        foreach ($assignments as $assignment) {
+                            $query->orWhere(function ($q) use ($assignment) {
+                                if ($assignment->section_id == null) {
+                                    $q->where('level_id', $assignment->level_id);
+                                } else {
+                                    $q->where('level_id', $assignment->level_id)
+                                        ->where('section_id', $assignment->section_id);
+                                }
+                            });
+                        }
+                    });
+                $gradeLevels = Auth::user()->member->faculty->levels;
+                break;
+
+        }
 
         if ($search = $request->input('search')) {
             $query->when($search, function ($query, $search) {
@@ -47,6 +78,10 @@ class StudentController extends Controller
 
         $students = $query->paginate(10)->withQueryString();
 
+        // $gradeLevel = $request->string('grade_level');
+        // $sectionId = $request->string('section_id');
+
+
         return Inertia::render('student/Index', [
             'students' => $students,
             'filters' => [
@@ -54,7 +89,7 @@ class StudentController extends Controller
                 'grade_level' => $gradeLevel,
                 'section_id' => $sectionId,
             ],
-            'gradeLevels' => Level::select('id', 'name')->get(),
+            'gradeLevels' => $gradeLevels,
             'filteredSections' => Section::where('level_id', $gradeLevel)->select('id', 'name', 'level_id')->get()
         ]);
     }

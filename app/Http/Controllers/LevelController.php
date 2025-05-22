@@ -14,19 +14,25 @@ class LevelController extends Controller
     public function index(Request $request)
     {
 
-        $query = Level::with(['sections']);
+        // $query = Level::with(['sections']);
+        $query = Section::with(['level']);
 
-        if ($search = $request->input('search')) {
-            $query->where('name', 'like', "%{$search}%");
-        }
 
-        $levels = $query->paginate(10)->withQueryString();
+        // if ($search = $request->input('search')) {
+        //     $query->where('name', 'like', "%{$search}%");
+        // }
+
+        // $query->where()
+
+        $sections = $query->paginate(10)->withQueryString();
+
+        // dd($sections);
 
         return Inertia::render('level/Index', [
-            'levels' => $levels,
-            'filters' => [
-                'search' => $search
-            ]
+            'sections' => $sections,
+            // 'filters' => [
+            //     'search' => $search
+            // ]
         ]);
     }
 

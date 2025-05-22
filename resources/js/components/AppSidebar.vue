@@ -4,16 +4,21 @@ import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import { BookOpen, PrinterCheck, LayoutGrid, UsersRound, University, Users, BookCheck } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
+import { computed } from 'vue';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/dashboard',
-        icon: LayoutGrid,
-    },
+const page = usePage<any>()
+const user = page.props.auth.user
+console.log(user)
+
+const navItems: NavItem[] = [
+    // {
+    //     title: 'Dashboard',
+    //     href: '/dashboard',
+    //     icon: LayoutGrid,
+    // },
     {
         title: 'Students',
         href: '/students',
@@ -40,6 +45,25 @@ const mainNavItems: NavItem[] = [
         icon: PrinterCheck,
     },
 ];
+
+const mainNavItems = computed(() => {
+    if (user.role === 'admin') {
+        return navItems
+    } else {
+        return [
+    {
+        title: 'Students',
+        href: '/students',
+        icon: UsersRound,
+    },
+    {
+        title: 'Reports',
+        href: '/reports',
+        icon: PrinterCheck,
+    },
+        ]
+    }
+})
 
 const footerNavItems: NavItem[] = [
     // {

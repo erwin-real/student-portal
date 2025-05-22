@@ -5,13 +5,22 @@ use App\Http\Controllers\LevelController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\IsAdmin;
 use App\Models\Member;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 
 Route::get('/test', function () {
+    $records = DB::select("SELECT linked_member_id as Id, rfid, last_name as Lastname, first_name as Firstname,
+        middle_name as Middlename,
+        (SELECT name FROM levels WHERE id=s.level_id) as GradeLevel,
+        photo as PhotoFileName, mobile_no as Mobile,
+        s.can_notify = 1 as IsNotify
+        FROM members m LEFT JOIN students s ON m.id=s.member_id
+    ");
 
+    return $records;
 })->name('test');
 
 // Route::get('/preview-pdf', [ReportController::class, 'preview']);
@@ -25,6 +34,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::group(['middleware' => 'auth'], function () {
+    Route::get('/get-current-user', [UserController::class, 'getCurrentUser'])->name('getCurrentUser');
 
     Route::group(['prefix' => 'students'], function () {
         Route::get('/', [StudentController::class, 'index'])->name('students.index');
@@ -33,27 +43,36 @@ Route::group(['middleware' => 'auth'], function () {
         Route::match(['put', 'patch'], '/{student}', [StudentController::class, 'update'])->name('students.update');
     });
 
-    Route::group(['prefix' => 'faculties'], function () {
-        Route::get('/', [FacultyController::class, 'index'])->name('faculties.index');
-        Route::get('/{id}', [FacultyController::class, 'show'])->name('faculties.show');
-        Route::get('/{id}/edit', [FacultyController::class, 'edit'])->name('faculties.edit');
-        Route::match(['put', 'patch'], '/{student}', [FacultyController::class, 'update'])->name('faculties.update');
-    });
+    Route::prefix('faculties')
+        ->middleware(IsAdmin::class)
+        ->controller(FacultyController::class)
+        ->group(function () {
+            Route::get('/', 'index')->name('faculties.index');
+            Route::get('/{id}', 'show')->name('faculties.show');
+            Route::get('/{id}/edit', 'edit')->name('faculties.edit');
+            Route::match(['put', 'patch'], '/{student}', 'update')->name('faculties.update');
+        });
 
-    Route::group(['prefix' => 'users'], function () {
-        Route::get('/', [UserController::class, 'index'])->name('users.index');
-        Route::get('/create', [UserController::class, 'create'])->name('users.create');
-        Route::get('/{id}', [UserController::class, 'show'])->name('users.show');
-        Route::get('/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
-        Route::match(['put', 'patch'], '/{student}', [UserController::class, 'update'])->name('users.update');
-        Route::post('/', [UserController::class, 'store'])->name('users.store');
-    });
+    Route::prefix('users')
+        ->middleware(IsAdmin::class)
+        ->controller(UserController::class)
+        ->group(function () {
+            Route::get('/', 'index')->name('users.index');
+            Route::post('/', 'store')->name('users.store');
+            Route::get('/create', 'create')->name('users.create');
+            Route::get('/{id}', 'show')->name('users.show');
+            Route::get('/{id}/edit', 'edit')->name('users.edit');
+            Route::match(['put', 'patch'], '/{student}', 'update')->name('users.update');
+        });
 
-    Route::group(['prefix' => 'levels'], function () {
-        Route::get('/', [LevelController::class, 'index'])->name('levels.index');
-        Route::get('/create', [LevelController::class, 'create'])->name(name: 'levels.create');
-        Route::post('/', [LevelController::class, 'store'])->name('levels.store');
-    });
+    Route::prefix('levels')
+        ->middleware(IsAdmin::class)
+        ->controller(LevelController::class)
+        ->group(function () {
+            Route::get('/', 'index')->name('levels.index');
+            Route::get('/create', 'create')->name(name: 'levels.create');
+            Route::post('/', 'store')->name('levels.store');
+        });
 
     Route::group(['prefix' => 'reports'], function () {
         Route::get('/', [ReportController::class, 'index'])->name('reports.index');

@@ -251,9 +251,9 @@ const breadcrumbs: BreadcrumbItem[] = [
                     <TableBody>
                         <TableRow v-for="member in members.data" :key="member.id">
                             <TableCell>{{ member.first_name }} {{ member.last_name }}</TableCell>
-                            <TableCell>{{ member?.user?.role ?? '---' }}</TableCell>
+                            <TableCell>{{ member?.student ? 'Student' : 'Faculty' }}</TableCell>
                             <TableCell>{{ member.student?.level?.name ?? '---' }}</TableCell>
-                            <TableCell>{{ member.student?.section?.name ?? '---' }}</TableCell>
+                            <TableCell>{{ member.student?.section?.name ? member.student.section.name : '---' }}</TableCell>
                             <TableCell class="space-x-2">
                                 <!-- <Link :href="route('reports.index', member.id)" :class="buttonVariants({variant: 'secondary'})">Print</Link> -->
                                  <Button
