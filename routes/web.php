@@ -42,6 +42,18 @@ Route::group(['middleware' => 'auth'], function () {
             Route::match(['put', 'patch'], '/{student}', 'update')->name('students.update');
         });
 
+    Route::prefix('levels')
+        ->middleware(IsAdmin::class)
+        ->controller(LevelController::class)
+        ->group(function () {
+            Route::get('/', 'index')->name('levels.index');
+            Route::get('/create', 'create')->name(name: 'levels.create');
+            Route::post('/', 'store')->name('levels.store');
+            Route::get('/{id}', 'show')->name('levels.show');
+            Route::get('/{id}/edit', 'edit')->name('levels.edit');
+            Route::match(['put', 'patch'], '/{id}', 'update')->name('levels.update');
+        });
+
     Route::prefix('faculties')
         ->middleware(IsAdmin::class)
         ->controller(FacultyController::class)
@@ -62,18 +74,6 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/{id}', 'show')->name('users.show');
             Route::get('/{id}/edit', 'edit')->name('users.edit');
             Route::match(['put', 'patch'], '/{student}', 'update')->name('users.update');
-        });
-
-    Route::prefix('levels')
-        ->middleware(IsAdmin::class)
-        ->controller(LevelController::class)
-        ->group(function () {
-            Route::get('/', 'index')->name('levels.index');
-            Route::get('/create', 'create')->name(name: 'levels.create');
-            Route::post('/', 'store')->name('levels.store');
-            Route::get('/{id}', 'show')->name('levels.show');
-            Route::get('/{id}/edit', 'edit')->name('levels.edit');
-            Route::match(['put', 'patch'], '/{id}', 'update')->name('levels.update');
         });
 
     Route::prefix('reports')

@@ -11,6 +11,7 @@ use App\Models\Section;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class StudentController extends Controller
@@ -96,7 +97,12 @@ class StudentController extends Controller
 
     public function show(int $studentID)
     {
+
         $student = Student::find($studentID);
+
+        if (Gate::denies('view', $student)) {
+            return redirect('/students')->with('error', 'Access denied.');
+        }
 
         $student->load([
             'member',
@@ -113,6 +119,10 @@ class StudentController extends Controller
     {
         $student = Student::find($studentID);
 
+        if (Gate::denies('edit', $student)) {
+            return redirect('/students')->with('error', 'Access denied.');
+        }
+
         $student->load([
             'member',
             'level',
@@ -128,6 +138,10 @@ class StudentController extends Controller
     public function update(StudentRequest $request, string $studentID)
     {
         $student = Student::find($studentID);
+
+        if (Gate::denies('update', $student)) {
+            return redirect('/students')->with('error', 'Access denied.');
+        }
 
         $data = $request->validated();
 
