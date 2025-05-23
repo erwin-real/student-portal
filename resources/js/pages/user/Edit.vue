@@ -2,7 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { type BreadcrumbItem } from '@/types';
+import { GradeLevel, Section, type BreadcrumbItem } from '@/types';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { capitalize, computed, ref } from 'vue';
 import { Input } from '@/components/ui/input';
@@ -13,21 +13,9 @@ import InputError from '@/components/InputError.vue';
 import { toast } from 'vue-sonner';
 import { Separator } from '@/components/ui/separator';
 
-interface Section {
-    id: number
-    name: string
-    level_id: number
-}
-
-interface GradeLevel {
-    id: number
-    name: string
-    sections: Section[]
-}
-
 interface AddedItem {
   gradeLevel: GradeLevel
-  section: Section
+  section: Section | null
 }
 
 const props = defineProps<{

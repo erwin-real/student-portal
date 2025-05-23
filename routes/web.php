@@ -23,8 +23,6 @@ Route::get('/test', function () {
     return $records;
 })->name('test');
 
-// Route::get('/preview-pdf', [ReportController::class, 'preview']);
-
 Route::get('/', function () {
     return redirect()->route('login');
 })->name('home');
@@ -34,14 +32,15 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('/get-current-user', [UserController::class, 'getCurrentUser'])->name('getCurrentUser');
 
-    Route::group(['prefix' => 'students'], function () {
-        Route::get('/', [StudentController::class, 'index'])->name('students.index');
-        Route::get('/{id}', [StudentController::class, 'show'])->name('students.show');
-        Route::get('/{id}/edit', [StudentController::class, 'edit'])->name('students.edit');
-        Route::match(['put', 'patch'], '/{student}', [StudentController::class, 'update'])->name('students.update');
-    });
+    Route::prefix('students')
+        ->controller(StudentController::class)
+        ->group(function () {
+            Route::get('/', 'index')->name('students.index');
+            Route::get('/{id}', 'show')->name('students.show');
+            Route::get('/{id}/edit', 'edit')->name('students.edit');
+            Route::match(['put', 'patch'], '/{student}', 'update')->name('students.update');
+        });
 
     Route::prefix('faculties')
         ->middleware(IsAdmin::class)
@@ -74,18 +73,16 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/', 'store')->name('levels.store');
             Route::get('/{id}', 'show')->name('levels.show');
             Route::get('/{id}/edit', 'edit')->name('levels.edit');
+            Route::match(['put', 'patch'], '/{id}', 'update')->name('levels.update');
         });
 
-    Route::group(['prefix' => 'reports'], function () {
-        Route::get('/', [ReportController::class, 'index'])->name('reports.index');
-        Route::post('/preview-pdf-daily', [ReportController::class, 'dailyReport'])->name('reports.daily');
-        Route::post('/preview-pdf-detailed', [ReportController::class, 'detailedReport'])->name('reports.detailed');
-        // Route::get('/create', [ReportController::class, 'create'])->name(name: 'reports.create');
-        // Route::post('/', [ReportController::class, 'store'])->name('reports.store');
-        // Route::get('/{id}', [ReportController::class, 'show'])->name('reports.show');
-        // Route::get('/{id}/edit', [ReportController::class, 'edit'])->name('levels.edit');
-        // Route::match(['put', 'patch'], '/{student}', [ReportController::class, 'update'])->name('reports.update');
-    });
+    Route::prefix('reports')
+        ->controller(ReportController::class)
+        ->group(function () {
+            Route::get('/', 'index')->name('reports.index');
+            Route::post('/preview-pdf-daily', 'dailyReport')->name('reports.daily');
+            Route::post('/preview-pdf-detailed', 'detailedReport')->name('reports.detailed');
+        });
 
 });
 

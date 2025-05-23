@@ -2,7 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { type BreadcrumbItem } from '@/types';
+import { GradeLevel, type BreadcrumbItem } from '@/types';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { capitalize, ref } from 'vue';
 import { Input } from '@/components/ui/input';
@@ -11,12 +11,9 @@ import { Label } from '@/components/ui/label';
 import InputError from '@/components/InputError.vue';
 import { toast } from 'vue-sonner';
 
-const props = defineProps({
-    gradeLevels: {
-        type: Array,
-        required: true
-    }
-})
+defineProps<{
+    gradeLevels: GradeLevel[]
+}>()
 
 const form = useForm({
     level_id: '',

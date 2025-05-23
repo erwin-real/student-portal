@@ -40,4 +40,17 @@ export interface User {
     updated_at: string;
 }
 
+interface Section {
+    id: number
+    name: string
+    level_id: number
+    description: string
+}
+
+interface GradeLevel {
+    id: number
+    name: string
+    sections: Section[]
+}
+
 export type BreadcrumbItemType = BreadcrumbItem;
