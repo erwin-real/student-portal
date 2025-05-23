@@ -64,6 +64,7 @@ const reportTypes = ['Detailed Daily Attendance Logs', 'Daily Attendance']
 const reportType = ref('')
 const fromDate = ref('')
 const toDate = ref('')
+const loading = ref(false)
 
 const dateError = computed(() => {
   if (fromDate.value && toDate.value) {
@@ -78,25 +79,28 @@ const dateError = computed(() => {
 })
 
 const previewPdf = async (memberID: string) => {
-  const formData = new FormData()
-  formData.append('fromDate', fromDate.value)
-  formData.append('toDate', toDate.value)
-  formData.append('reportType', reportType.value)
-  formData.append('memberID', memberID)
+    loading.value = true
+    const formData = new FormData()
+    formData.append('fromDate', fromDate.value)
+    formData.append('toDate', toDate.value)
+    formData.append('reportType', reportType.value)
+    formData.append('memberID', memberID)
 
-  try {
+    try {
     const endpoint = `/reports/preview-pdf-${reportType.value === 'Daily Attendance' ? 'daily' : 'detailed'}`;
 
     const response = await axios.post(endpoint, formData, {
-      responseType: 'blob',
+        responseType: 'blob',
     })
 
     const blob = new Blob([response.data], { type: 'application/pdf' })
     const url = URL.createObjectURL(blob)
     window.open(url, '_blank')
-  } catch (error) {
+    } catch (error) {
     console.error('Failed to generate PDF', error)
-  }
+    } finally {
+        loading.value = false
+    }
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -255,14 +259,14 @@ const breadcrumbs: BreadcrumbItem[] = [
                             <TableCell>{{ member.student?.level?.name ?? '---' }}</TableCell>
                             <TableCell>{{ member.student?.section?.name ? member.student.section.name : '---' }}</TableCell>
                             <TableCell class="space-x-2">
-                                <!-- <Link :href="route('reports.index', member.id)" :class="buttonVariants({variant: 'secondary'})">Print</Link> -->
                                  <Button
                                     @click="previewPdf(member.linked_member_id)"
                                     :class="buttonVariants({variant: 'secondary'})"
                                     class="cursor-pointer"
-                                    :disabled="!!dateError || !reportType"
+                                    :disabled="!!dateError || !reportType || loading"
                                 >
-                                    Print
+                                    <span v-if="loading">Loading PDF...</span>
+                                    <span v-else>Print</span>
                                 </Button>
                             </TableCell>
                         </TableRow>
