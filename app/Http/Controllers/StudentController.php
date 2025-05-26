@@ -145,10 +145,13 @@ class StudentController extends Controller
 
         $data = $request->validated();
 
-        $student->update([
-            'level_id' => $data['level_id'],
-            'section_id' => $data['section_id']
-        ]);
+        if (array_key_exists('section_id', $data)) {
+            $student->update([
+                'level_id' => $data['level_id'],
+                'section_id' => $data['section_id']
+            ]);
+        } else
+            $student->update(['level_id' => $data['level_id']]);
 
         $student->member()->update([
             'first_name' => $data['first_name'],

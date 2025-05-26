@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 
-Route::get('/test', function () {
+Route::get('/3ca60d0867d667964632dce', function () {
     $records = DB::select("SELECT linked_member_id as Id, rfid, last_name as Lastname, first_name as Firstname,
         middle_name as Middlename,
         (SELECT name FROM levels WHERE id=s.level_id) as GradeLevel,
@@ -24,12 +24,15 @@ Route::get('/test', function () {
 })->name('test');
 
 Route::get('/', function () {
+    if (Auth::check())
+        return redirect('/students'); // or whatever route you want
+
     return redirect()->route('login');
 })->name('home');
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    return redirect('/students'); // or whatever route you want
+})->middleware(['auth'])->name('students');
 
 Route::group(['middleware' => 'auth'], function () {
 

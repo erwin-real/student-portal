@@ -42,6 +42,11 @@
         @routes
         @vite(['resources/js/app.ts'])
         @inertiaHead
+
+        {{-- @routes
+        <link rel="stylesheet" href="{{ asset('build/assets/app-CknGdFPz.css') }}">
+        <script type="module" src="{{ asset('build/assets/app-eCT0FO8N.js') }}"></script>
+        @inertiaHead --}}
     </head>
     <body class="font-sans antialiased">
         @inertia
