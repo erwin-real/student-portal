@@ -31,10 +31,13 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/dashboard', function () {
-    return redirect('/students'); // or whatever route you want
-})->middleware(['auth'])->name('students');
+    return redirect('/students');
+})->middleware(['auth'])->name('dashboard');
 
 Route::group(['middleware' => 'auth'], function () {
+    Route::get('/', function () {
+        return redirect('/students');
+    })->name('students');
 
     Route::prefix('students')
         ->controller(StudentController::class)
