@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Daily Attendance Report</title>
+    <title>Detailed Attendance Report</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -101,41 +101,77 @@
                 $rows = max($leftCol->count(), $rightCol->count());
             @endphp
 
+            {{-- @foreach ($records as $dateRecord => $collection) --}}
             @for ($i = 0; $i < $rows; $i++)
                 <tr>
-                    {{-- Left column --}}
                     @php $left = $leftCol[$i] ?? null; @endphp
                     <td style="width: 15%;">
-                        {{ $left ? $left->DATERECORD : '' }}
+                        {{ $left[0]->DATERECORD }}
                     </td>
                     <td style="width: 15%;">
+                        @for ($j = 0; $j < count($left); $j++)
+                            {{$left[$j]->TIMERECORD}} <br />
+                        @endfor
+                    </td>
+                    <td style="width: 15%;">
+                        @for ($j = 0; $j < count($left); $j++)
+                            {{$left[$j]->STATUS}} <br />
+                        @endfor
+                    </td>
+                    {{-- <td style="width: 15%;">
                         @if ($left && $left->STATUS === 'ABSENT')
                             ----------
                         @elseif ($left)
-                            {{ $left->TIMEIN }}<br>
-                            {{ $left->TIMEOUT }}<br>
+                            {{ $left->TIMERECORD }}<br>
                         @endif
                     </td>
                     <td style="width: 10%;">
                         @if ($left && $left->STATUS === 'ABSENT')
                             ABSENT
                         @elseif ($left)
-                            @if ($type === 'daily')
-                                INITIAL
-                                <br>
-                                LAST
-                            @else
-                                IN
-                                <br>
-                                OUT
-                            @endif
+                            {{ $left->STATUS }}
                         @endif
-                    </td>
+                    </td> --}}
 
                     <td class="divider-col"></td>
 
-                    {{-- Right column --}}
+
                     @php $right = $rightCol[$i] ?? null; @endphp
+                    @if (!empty($right) && isset($right[0]->DATERECORD))
+                        <td style="width: 15%;">
+                            {{ $right[0]->DATERECORD }}
+                        </td>
+                        <td style="width: 15%;">
+                            @for ($j = 0; $j < count($right); $j++)
+                                {{$right[$j]->TIMERECORD}} <br />
+                            @endfor
+                        </td>
+                        <td style="width: 15%;">
+                            @for ($j = 0; $j < count($right); $j++)
+                                {{$right[$j]->STATUS}} <br />
+                            @endfor
+                        </td>
+                    @else
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    @endif
+                    {{-- <td style="width: 15%;">
+                        {{ $rightCol }}
+                    </td> --}}
+                    {{-- <td style="width: 15%;">
+                        @for ($j = 0; $j < count($right); $j++)
+                            {{$right[$j]->TIMERECORD}} <br />
+                        @endfor
+                    </td>
+                    <td style="width: 15%;">
+                        @for ($j = 0; $j < count($right); $j++)
+                            {{$right[$j]->STATUS}} <br />
+                        @endfor
+                    </td> --}}
+
+                    {{-- Right column --}}
+                    {{-- @php $right = $rightCol[$i] ?? null; @endphp
                     <td style="width: 15%;">
                         {{ $right ? $right->DATERECORD : '' }}
                     </td>
@@ -151,19 +187,18 @@
                         @if ($right && $right->STATUS === 'ABSENT')
                             ABSENT
                         @elseif ($right)
-                            @if ($type === 'daily')
-                                INITIAL
-                                <br>
-                                LAST
-                            @else
+                            @if ($right->TIMEIN)
                                 IN
-                                <br>
+                            @endif
+                            <br>
+                            @if ($right->TIMEOUT)
                                 OUT
                             @endif
                         @endif
-                    </td>
+                    </td> --}}
                 </tr>
             @endfor
+            {{-- @endforeach --}}
         </tbody>
     </table>
 

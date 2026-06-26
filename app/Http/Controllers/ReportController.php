@@ -12,6 +12,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class ReportController extends Controller
@@ -194,7 +195,7 @@ class ReportController extends Controller
             ];
         })->values(); // Reset keys
 
-        $pdf = Pdf::loadView('reports.template', [
+        $pdf = Pdf::loadView('reports.daily', [
             'reportType' => $request->input('reportType'),
             'fromDate' => $fromDate,
             'toDate' => $toDate,
@@ -289,35 +290,55 @@ class ReportController extends Controller
         // 3. Group by DATERECORD
         $grouped = $collection->groupBy('DATERECORD');
 
-        // 4. Map into merged TIMEIN/TIMEOUT records with STATUS
-        $final = $grouped->map(function ($records, $date) {
-            // Filter valid time records
-            $validTimes = $records->where('TIMERECORD', '!=', '------------');
+        // $final = $grouped->map(function ($records, $date) {
+        //     // Filter valid time records
+        //     $validTimes = $records->where('TIMERECORD', '!=', '------------');
 
-            $timeIn = optional($validTimes->sortBy('TIMESTAMPVAL')->first())->TIMERECORD ?? '------------';
-            $timeOut = optional($validTimes->sortByDesc('TIMESTAMPVAL')->first())->TIMERECORD ?? '------------';
+        //     $timeIn = optional($validTimes->sortBy('TIMESTAMPVAL')->first())->TIMERECORD ?? '------------';
+        //     $timeOut = optional($validTimes->sortByDesc('TIMESTAMPVAL')->first())->TIMERECORD ?? '------------';
 
-            return (object) [
-                'DATERECORD' => $date,
-                'TIMEIN' => $timeIn,
-                'TIMEOUT' => $timeOut,
-                'STATUS' => ($timeIn !== '------------' || $timeOut !== '------------') ? 'PRESENT' : 'ABSENT',
-            ];
-        })->values(); // Reset keys
+        //     return (object) [
+        //         'DATERECORD' => $date,
+        //         'TIMEIN' => $timeIn,
+        //         'TIMEOUT' => $timeOut,
+        //         'STATUS' => ($timeIn !== '------------' || $timeOut !== '------------') ? 'PRESENT' : 'ABSENT',
+        //     ];
+        // })->values(); // Reset keys
 
-        $pdf = Pdf::loadView('reports.template', [
-            'reportType' => $request->input('reportType'),
-            'fromDate' => $fromDate,
-            'toDate' => $toDate,
-            'records' => $final,
-            'query' => $query,
-            'student_name' => $member['first_name'] . " " . $member['last_name'] . " " . $member['middle_name'],
-            'grade' => $member->student->level->name,
-            'school_year' => '2024-2025',
-            'type' => 'detailed'
-        ]);
+        try {
+            Log::info('Generating PDF', [
+                'reportType' => $request->input('reportType'),
+                'fromDate' => $fromDate,
+                'toDate' => $toDate,
+                'records' => $grouped,
+                'query' => $query,
+                'student_name' => $member['first_name'] . " " . $member['last_name'] . " " . $member['middle_name'],
+                'grade' => $member->student->level->name,
+                'school_year' => '2024-2025',
+                'type' => 'detailed'
+            ]);
 
-        return $pdf->stream('daily.pdf');
+            $pdf = Pdf::loadView('reports.detailed', [
+                'reportType' => $request->input('reportType'),
+                'fromDate' => $fromDate,
+                'toDate' => $toDate,
+                'records' => $grouped,
+                'query' => $query,
+                'student_name' => $member['first_name'] . " " . $member['last_name'] . " " . $member['middle_name'],
+                'grade' => $member->student->level->name,
+                'school_year' => '2024-2025',
+                'type' => 'detailed'
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('PDF Generation Failed: ' . $e->getMessage());
+
+            return response()->json([
+                'error' => 'Failed to generate PDF.',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+
+        return $pdf->stream('detailed.pdf');
     }
 
 }
